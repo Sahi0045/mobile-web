@@ -16,6 +16,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
+    width: '100%',
+    overflowX: 'hidden',
   },
   main: {
     flex: '1 0 auto',
@@ -35,41 +37,41 @@ const styles = {
 
 const TrustIndicators = () => {
   return (
-    <div className="py-10 bg-white border-t border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 md:px-0">
-        <div className="text-center mb-8">
-          <h3 className="text-2xl font-bold text-gray-800">Trusted by Thousands</h3>
+    <div className="py-8 md:py-10 bg-white border-t border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-6 md:mb-8">
+          <h3 className="text-xl md:text-2xl font-bold text-gray-800">Trusted by Thousands</h3>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-16">
+        <div className="flex flex-wrap justify-center gap-8 md:gap-16">
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#0066b2] mb-1">12K+</div>
+            <div className="text-2xl md:text-3xl font-bold text-[#0066b2] mb-1">12K+</div>
             <div className="text-gray-600 text-sm">Happy Customers</div>
           </div>
           
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#0066b2] mb-1">150+</div>
+            <div className="text-2xl md:text-3xl font-bold text-[#0066b2] mb-1">150+</div>
             <div className="text-gray-600 text-sm">Destinations</div>
           </div>
           
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#0066b2] mb-1">98%</div>
+            <div className="text-2xl md:text-3xl font-bold text-[#0066b2] mb-1">98%</div>
             <div className="text-gray-600 text-sm">Satisfaction Rate</div>
           </div>
           
           <div className="text-center">
-            <div className="text-3xl font-bold text-[#0066b2] mb-1">24/7</div>
+            <div className="text-2xl md:text-3xl font-bold text-[#0066b2] mb-1">24/7</div>
             <div className="text-gray-600 text-sm">Customer Support</div>
           </div>
         </div>
         
-        <div className="mt-8 flex justify-center">
-          <div className="flex gap-8 opacity-60">
-            <img src="/images/logos/forbes.png" alt="Forbes" className="h-6" />
-            <img src="/images/logos/travelandleisure.png" alt="Travel+Leisure" className="h-6" />
-            <img src="/images/logos/cruisecritic.png" alt="Cruise Critic" className="h-6" />
-            <img src="/images/logos/tripadvisor.png" alt="TripAdvisor" className="h-6" />
-            <img src="/images/logos/cntraveler.png" alt="CN Traveler" className="h-6" />
+        <div className="mt-6 md:mt-8 flex justify-center">
+          <div className="grid grid-cols-3 gap-4 md:flex md:gap-8 opacity-60">
+            <img src="/images/logos/forbes.png" alt="Forbes" className="h-5 md:h-6" />
+            <img src="/images/logos/travelandleisure.png" alt="Travel+Leisure" className="h-5 md:h-6" />
+            <img src="/images/logos/cruisecritic.png" alt="Cruise Critic" className="h-5 md:h-6" />
+            <img src="/images/logos/tripadvisor.png" alt="TripAdvisor" className="h-5 md:h-6 hidden md:block" />
+            <img src="/images/logos/cntraveler.png" alt="CN Traveler" className="h-5 md:h-6 hidden md:block" />
           </div>
         </div>
       </div>
@@ -585,7 +587,7 @@ const HomePage = () => {
         
         
         {/* Simple Email Subscription Section */}
-        <section className="subscription-section py-16 relative" style={{ 
+        <section className="subscription-section py-10 md:py-16 relative" style={{ 
           backgroundImage: "url('https://images.unsplash.com/photo-1599640842225-85d111c60e6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')",
           backgroundSize: "cover",
           backgroundPosition: "center",
@@ -594,16 +596,16 @@ const HomePage = () => {
           {/* Overlay */}
           <div className="absolute inset-0 bg-blue-900 opacity-80"></div>
           
-          <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-xl mx-auto bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-10 border border-white border-opacity-20 shadow-lg">
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="max-w-xl mx-auto bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6 md:p-10 border border-white border-opacity-20 shadow-lg">
               <div className="flex flex-col items-center text-center">
                 <div className="mb-2">
                   <FaEnvelope className="text-white text-2xl" />
                 </div>
-                <h3 className="text-3xl font-bold text-white mb-2">Stay Updated</h3>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Stay Updated</h3>
                 <p className="text-white text-opacity-90 mb-6">Subscribe to receive the latest cruise deals and travel tips directly to your inbox.</p>
                 
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-6 hidden md:flex">
                   <div className="flex -space-x-2">
                     <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
                     <img className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
@@ -621,18 +623,18 @@ const HomePage = () => {
                   </div>
                 ) : (
                   <form onSubmit={handleSubscriptionSubmit} className="w-full">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col md:flex-row md:items-center gap-2">
                       <input
                         type="email"
                         value={subscriptionEmail}
                         onChange={(e) => setSubscriptionEmail(e.target.value)}
                         placeholder="Enter your email address"
-                        className="flex-1 px-5 py-3 rounded-l-lg bg-white border-0 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                        className="w-full md:flex-1 px-4 py-3 rounded-lg md:rounded-l-lg md:rounded-r-none bg-white border-0 focus:outline-none focus:ring-2 focus:ring-blue-300"
                         required
                       />
                       <button 
                         type="submit" 
-                        className="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-r-lg flex items-center transition-colors"
+                        className="w-full md:w-auto mt-2 md:mt-0 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg md:rounded-l-none md:rounded-r-lg flex items-center justify-center md:justify-start transition-colors"
                       >
                         Subscribe
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -663,6 +665,18 @@ const HomePage = () => {
       
       {/* <ContactSection /> */}
       
+      <Footer />
+      
+      {/* Mobile scroll to top button - only visible on small screens */}
+      <button 
+        onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} 
+        className="fixed bottom-6 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg z-50 hover:bg-blue-700 transition-colors md:hidden"
+        aria-label="Scroll to top"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+      </button>
     </div>
   );
 };
