@@ -1,20 +1,127 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Mail, Check, AlertCircle } from 'lucide-react';
 import { subscriptionAirplane } from "./data.js"
 
 export default function SubscribeSection() {
-  const [email, setEmail] = useState("")
-  const [agreed, setAgreed] = useState(false)
-  const [subscribed, setSubscribed] = useState(false)
+  const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState({
+    totalSubscribers: 2500,
+    subscribersToday: 0,
+    avatars: []
+  });
 
-  const handleSubscribe = () => {
-    if (email && agreed) {
-      // In a real app, this would submit to an API
-      console.log("Subscribing email:", email)
-      setSubscribed(true)
+  useEffect(() => {
+    // Fetch subscription stats when component mounts
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      // Use mocked data for now, or connect to real API
+      // In production, you would uncomment this code to fetch real data
+      /*
+      const response = await axios.get('/api/subscriptions/stats');
+      if (response.data && response.data.success) {
+        setStats(response.data.data);
+      }
+      */
+      
+      // For demo purposes, use static data
+      setStats({
+        totalSubscribers: 2500,
+        subscribersToday: Math.floor(Math.random() * 100) + 10,
+        avatars: [
+          { id: 1, image_url: 'https://randomuser.me/api/portraits/men/32.jpg' },
+          { id: 2, image_url: 'https://randomuser.me/api/portraits/women/44.jpg' },
+          { id: 3, image_url: 'https://randomuser.me/api/portraits/men/67.jpg' },
+          { id: 4, image_url: 'https://randomuser.me/api/portraits/women/28.jpg' }
+        ]
+      });
+    } catch (err) {
+      console.error('Error fetching stats:', err);
     }
-  }
+  };
+
+  const validateEmail = (email) => {
+    return email.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Reset states
+    setError('');
+    setSuccess(false);
+    
+    // Validate email
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    
+    // Validate consent
+    if (!consent) {
+      setError('You must agree to receive promotional emails');
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      // Use mocked success for now, or connect to real API
+      // In production, you would uncomment this code to call the real API
+      /*
+      const response = await axios.post('/api/subscriptions/subscribe', {
+        email,
+        consent,
+        source: 'flight_page'
+      });
+      
+      if (response.data && response.data.success) {
+        setSuccess(true);
+        setEmail('');
+        setConsent(false);
+        // Update the subscriber count
+        setStats(prev => ({
+          ...prev,
+          totalSubscribers: prev.totalSubscribers + 1,
+          subscribersToday: prev.subscribersToday + 1
+        }));
+      } else {
+        setError(response.data?.message || 'Failed to subscribe. Please try again.');
+      }
+      */
+      
+      // For demo purposes, simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setSuccess(true);
+      setEmail('');
+      setConsent(false);
+      // Update the subscriber count
+      setStats(prev => ({
+        ...prev,
+        totalSubscribers: prev.totalSubscribers + 1,
+        subscribersToday: prev.subscribersToday + 1
+      }));
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setError(err.response?.data?.message || 'Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -73,7 +180,7 @@ export default function SubscribeSection() {
                 <div className="absolute -right-6 -top-6 bg-yellow-500/20 h-24 w-24 rounded-full blur-xl"></div>
                 
                 <p className="text-lg mb-6">
-                  Join over <span className="font-bold text-yellow-400">2.5 million travelers</span> and get the best flight deals directly to your inbox. Be the first to know about:
+                  Join over <span className="font-bold text-yellow-400">{stats.totalSubscribers.toLocaleString()}</span> travelers and get the best flight deals directly to your inbox. Be the first to know about:
                 </p>
                 
                 <ul className="mb-8 space-y-2">
@@ -101,7 +208,7 @@ export default function SubscribeSection() {
             
             {/* Right side - form */}
             <div className="md:w-1/2">
-              {subscribed ? (
+              {success ? (
                 <div className="bg-white rounded-xl shadow-2xl p-8 relative overflow-hidden">
                   <div className="absolute -left-12 -top-12 bg-green-500/10 h-40 w-40 rounded-full blur-xl"></div>
                   <div className="absolute -right-12 -bottom-12 bg-blue-500/10 h-40 w-40 rounded-full blur-xl"></div>
@@ -131,84 +238,81 @@ export default function SubscribeSection() {
                     <h3 className="text-2xl font-bold text-gray-800">Subscribe & Save</h3>
                   </div>
                   
-                  <div className="mb-6">
-                    <div className="relative mb-2">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <input
-                        type="email"
-                        placeholder="Enter your email address"
-                        className="w-full pl-10 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="mb-8">
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <div className="relative flex items-start pt-1">
+                  <form onSubmit={handleSubmit} className="space-y-6 mt-6">
+                    <div>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                         <input
-                          type="checkbox"
-                          className="peer sr-only"
-                          checked={agreed}
-                          onChange={(e) => setAgreed(e.target.checked)}
+                          type="email"
+                          placeholder="Enter your email address"
+                          className={`w-full pl-10 pr-4 py-4 border ${error ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          disabled={loading || success}
                         />
-                        <div className="w-5 h-5 bg-white border border-gray-300 rounded peer-checked:bg-blue-600 peer-checked:border-blue-600 transition-all"></div>
-                        <svg
-                          className="absolute w-3 h-3 text-white top-[0.4rem] left-1 hidden peer-checked:block pointer-events-none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
                       </div>
-                      <span className="text-sm text-gray-600">
-                        I agree to receive promotional emails. I understand that I can unsubscribe at any time. View our <span className="text-blue-600 underline cursor-pointer">Terms</span> and <span className="text-blue-600 underline cursor-pointer">Privacy Policy</span>.
-                      </span>
-                    </label>
-                  </div>
-                  
-                  <button
-                    className={`w-full py-4 rounded-xl font-bold text-lg relative overflow-hidden transition-all ${
-                      email && agreed 
-                        ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02]" 
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    }`}
-                    onClick={handleSubscribe}
-                    disabled={!email || !agreed}
-                  >
-                    <span className="relative z-10">GET 50% OFF MY NEXT FLIGHT</span>
-                    {email && agreed && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-full bg-gradient-to-r from-blue-500 to-blue-700 absolute"></div>
-                        <div className="w-32 h-32 bg-white/20 rounded-full absolute blur-xl"></div>
+                      {error && (
+                        <p className="mt-2 text-sm text-red-600 flex items-center">
+                          <AlertCircle className="h-4 w-4 mr-1" />
+                          {error}
+                        </p>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="consent"
+                          type="checkbox"
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          checked={consent}
+                          onChange={(e) => setConsent(e.target.checked)}
+                          disabled={loading || success}
+                        />
                       </div>
-                    )}
-                  </button>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor="consent" className="font-medium text-gray-700">
+                          I agree to receive promotional emails. I understand that I can 
+                          unsubscribe at any time. View our <a href="#" className="text-blue-600 hover:underline">Terms</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>.
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <button
+                      type="submit"
+                      className={`w-full py-4 rounded-xl font-bold text-lg relative overflow-hidden transition-all ${
+                        email && consent 
+                          ? "bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg hover:shadow-blue-500/30 hover:scale-[1.02]" 
+                          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      }`}
+                      disabled={!email || !consent}
+                    >
+                      <span className="relative z-10">GET 50% OFF MY NEXT FLIGHT</span>
+                      {email && consent && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-r from-blue-500 to-blue-700 absolute"></div>
+                          <div className="w-32 h-32 bg-white/20 rounded-full absolute blur-xl"></div>
+                        </div>
+                      )}
+                    </button>
+                  </form>
                   
                   <div className="flex items-center justify-center mt-6">
                     <div className="flex -space-x-2 mr-3">
-                      {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
+                      {stats.avatars.map((avatar, index) => (
+                        <div key={avatar.id || index} className="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
                           <img 
-                            src={`https://randomuser.me/api/portraits/men/${20 + i}.jpg`}
-                            alt="Customer" 
+                            src={avatar.image_url}
+                            alt={`Subscriber ${index + 1}`} 
                             className="w-full h-full object-cover" 
                           />
                         </div>
                       ))}
                     </div>
                     <div className="text-sm text-gray-500">
-                      <span className="font-bold text-gray-700">2,500+</span> travelers joined today
+                      <span className="font-bold text-gray-700">
+                        {stats.subscribersToday.toLocaleString()}+
+                      </span> travelers joined today
                     </div>
                   </div>
                 </div>

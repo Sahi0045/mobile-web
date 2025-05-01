@@ -148,7 +148,12 @@ export default function CheapestFlights({ onBookFlight }) {
                   </div>
                   
                   <button 
-                    onClick={() => onBookFlight && onBookFlight(flight.destination)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log('Book flight clicked:', flight.destination);
+                      onBookFlight && onBookFlight(flight.destination);
+                    }}
                     className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors shadow-sm"
                   >
                     Book Flight

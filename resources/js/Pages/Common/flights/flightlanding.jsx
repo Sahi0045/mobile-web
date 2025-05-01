@@ -248,40 +248,56 @@ export default function FlightLanding() {
 
       console.log('Sending search request with data:', searchData);
 
-      const response = await axios.post("https://jettter.vercel.app/api/flights/search", searchData, {
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        withCredentials: false
-      });
-  
-      console.log('Got response:', response);
-      
-      const data = response.data;
-      if (data && data.success !== false) {
-        console.log('Search successful, navigating to results');
-        navigate('/flights/search', { 
-          state: { 
-            searchData: searchData, // Original search parameters
-            apiResponse: data // API response
-          } 
+      // Save search data before making API request
+      // This ensures we can navigate even if the API fails
+      const requestData = {
+        searchData: searchData
+      };
+
+      try {
+        const response = await axios.post("https://jettter.vercel.app/api/flights/search", searchData, {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          withCredentials: false,
+          timeout: 10000 // 10 second timeout
         });
-      } else {
-        console.log("No flight results found:", data?.error || 'Unknown error');
+        
+        console.log('Got response:', response);
+        
+        const data = response.data;
+        if (data && data.success !== false) {
+          console.log('Search successful, navigating to results with API response');
+          navigate('/flights/search', { 
+            state: { 
+              searchData: searchData, // Original search parameters
+              apiResponse: data // API response
+            } 
+          });
+        } else {
+          console.log("No flight results found or API error:", data?.error || 'Unknown error');
+          // Navigate anyway, and let the search page handle it
+          navigate('/flights/search', { state: requestData });
+        }
+      } catch (error) {
+        console.error('Search API error:', error.message);
+        // Navigate to search page even if API fails
+        // The search page will retry the search
+        navigate('/flights/search', { state: requestData });
       }
     } catch (error) {
-      console.error('Search error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
+      console.error('Search function error:', error.message);
+      // If any other error occurs, still try to navigate
+      navigate('/flights/search', { 
+        state: { 
+          searchData: {
+            ...formData,
+            from: cityToIATACode[formData.from] || formData.from,
+            to: cityToIATACode[formData.to] || formData.to
+          }
+        } 
       });
-      
-      if (error.response) {
-        console.error(`Flight search failed: HTTP ${error.response.status}`, error.response.data);
-      } else {
-        console.error("Flight search failed:", error.message);
-      }
     }
   };
 
@@ -304,17 +320,35 @@ export default function FlightLanding() {
 
   // Handle book flight for a specific destination
   const handleBookFlight = (destination) => {
-    // Navigate to search page with specific destination
+    // Create a search request with the selected destination
+    const searchData = {
+      from: "New Delhi", // Default source
+      to: destination,
+      tripType: "oneWay",
+      departDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week from today
+      returnDate: "",
+      travelers: "1"
+    };
+    
+    // Get IATA codes for the cities
+    const fromCode = cityToIATACode[searchData.from] || searchData.from;
+    const toCode = cityToIATACode[searchData.to] || searchData.to;
+    
+    // Add IATA codes to search data
+    const searchRequestData = {
+      ...searchData,
+      from: fromCode,
+      to: toCode
+    };
+
+    console.log('Booking flight to destination:', destination);
+    console.log('Search data for booking:', searchRequestData);
+    
+    // Navigate directly to the search page with search parameters
+    // This will trigger the search on the search page component
     navigate('/flights/search', { 
       state: { 
-        searchData: {
-          from: "New Delhi", // Default source
-          to: destination,
-          tripType: "oneWay",
-          departDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 week from today
-          returnDate: "",
-          travelers: "1"
-        } 
+        searchData: searchRequestData
       } 
     });
   };

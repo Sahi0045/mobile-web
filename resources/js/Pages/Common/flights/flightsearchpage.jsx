@@ -100,7 +100,10 @@ export default function FlightSearchPage() {
     const fetchInitialFlights = async () => {
       if (location.state?.searchData) {
         setLoading(true);
+        setError(null);
         try {
+          console.log('Fetching flights with search data:', location.state.searchData);
+          
           // Ensure all required fields are present
           const searchData = {
             from: location.state.searchData.from,
@@ -108,7 +111,7 @@ export default function FlightSearchPage() {
             departDate: location.state.searchData.departDate,
             returnDate: location.state.searchData.returnDate,
             travelers: parseInt(location.state.searchData.travelers) || 1,
-            max: 10
+            max: 20 // Increased max results
           };
 
           // Validate required fields
@@ -121,12 +124,16 @@ export default function FlightSearchPage() {
             delete searchData.returnDate;
           }
 
+          console.log('Making API request with data:', searchData);
+
           const response = await fetch('https://jettter.vercel.app/api/flights/search', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Accept': 'application/json'
             },
-            body: JSON.stringify(searchData)
+            body: JSON.stringify(searchData),
+            credentials: 'omit'
           });
 
           if (!response.ok) {
@@ -135,29 +142,42 @@ export default function FlightSearchPage() {
           }
 
           const data = await response.json();
+          console.log('API response received:', data);
           
-          if (!data.success) {
+          if (!data.success && !data.data) {
             throw new Error(data.error || 'Failed to fetch flights');
           }
 
-          // Transform flight data
-          const flightData = transformFlightData(data.data);
-          setFlights(flightData);
-          
-          // Update prices in the date range
-          if (data.data.dateWisePrices) {
-            setDateRange(prev => 
-              prev.map(d => ({
-                ...d,
-                price: data.data.dateWisePrices[d.isoDate] ? `$${data.data.dateWisePrices[d.isoDate]}` : null,
-                isLowestPrice: data.data.dateWisePrices[d.isoDate] === data.data.lowestPrice
-              }))
-            );
+          if (data.data && data.data.length === 0) {
+            console.log('No flights found for the given search criteria');
+            setFlights([]);
+          } else {
+            // Transform flight data
+            const flightData = transformFlightData(data.data || []);
+            console.log('Transformed flight data:', flightData);
+            setFlights(flightData);
+            
+            // Update prices in the date range
+            if (data.data?.dateWisePrices) {
+              setDateRange(prev => 
+                prev.map(d => ({
+                  ...d,
+                  price: data.data.dateWisePrices[d.isoDate] ? `$${data.data.dateWisePrices[d.isoDate]}` : null,
+                  isLowestPrice: data.data.dateWisePrices[d.isoDate] === data.data.lowestPrice
+                }))
+              );
+            }
           }
         } catch (error) {
           console.error('Error fetching initial flights:', error);
-          setError(error.message);
-          setFlights([]); // Clear flights on error
+          setError(error.message || 'An error occurred while searching for flights');
+          // Use mock data if API fails
+          if (cheapFlights && cheapFlights.length > 0) {
+            console.log('Using mock flight data as fallback');
+            setFlights(cheapFlights);
+          } else {
+            setFlights([]);
+          }
         } finally {
           setLoading(false);
         }

@@ -105,7 +105,9 @@ export default function PopularDestinations({ onSelectDestination }) {
                     selectedDestination?.id === destination.id ? 'bg-blue-500 hover:bg-blue-600' : ''
                   }`}
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering the card click
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Book now clicked for destination:', destination.name);
                     handleDestinationClick(destination);
                   }}
                 >
