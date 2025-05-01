@@ -5,7 +5,7 @@ import { FaHotel, FaPlane, FaUtensils, FaShieldAlt, FaCheck, FaMapMarkerAlt, FaR
 import itineraryData from '../../../data/itinerarypackages.json'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
-import packageCallbackService from '../../../services/packageCallbackService';
+import packageCallbackService from '../../../Services/packageCallbackService';
 
 const ItineraryPackage = () => {
   const navigate = useNavigate();
