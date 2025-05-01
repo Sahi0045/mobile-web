@@ -3,7 +3,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { FaShip, FaPhone, FaTimes, FaUser, FaEnvelope, FaCalendarAlt, FaCommentAlt, FaCheckCircle } from 'react-icons/fa';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import callbackService from '../../../services/callbackService';
+import callbackService from '../../../Services/callbackService';
 import cruiseLineData from './data/cruiselines.json';
 
 const cruiseHighlights = [

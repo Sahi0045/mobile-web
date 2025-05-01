@@ -5,7 +5,7 @@ import { FaHotel, FaPlane, FaUtensils, FaShieldAlt, FaCheck, FaMapMarkerAlt, FaR
 import itineraryData from '../../../data/itinerarypackages.json'
 import Navbar from '../Navbar'
 import Footer from '../Footer'
-import packageCallbackService from '../../../services/packageCallbackService';
+import packageCallbackService from '../../../Services/packageCallbackService';
 
 const ItineraryPackage = () => {
   const navigate = useNavigate();
@@ -150,8 +150,8 @@ const ItineraryPackage = () => {
     <div className="min-h-screen bg-white">
       <Navbar forceScrolled={true} />
       <div className="container mx-auto px-4">
-        {/* Image Gallery Section */}
-        <div className="relative w-full h-[400px] mb-8 rounded-2xl overflow-hidden group">
+        {/* Image Gallery Section - Mobile Optimized */}
+        <div className="relative w-full h-[300px] md:h-[400px] mb-4 md:mb-8 rounded-xl md:rounded-2xl overflow-hidden group">
           {/* Main Image */}
           <div className="absolute inset-0 transition-transform duration-700 ease-in-out transform">
             <img 
@@ -159,24 +159,24 @@ const ItineraryPackage = () => {
               alt={packageImages[currentImageIndex].caption}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-              <div className="absolute bottom-6 left-6 text-white">
-                <h1 className="text-4xl font-bold mb-2">Dubai Explorer</h1>
-                <p className="text-lg text-white/90">{packageImages[currentImageIndex].caption}</p>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
+              <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
+                <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Dubai Explorer</h1>
+                <p className="text-sm md:text-lg text-white/90">{packageImages[currentImageIndex].caption}</p>
               </div>
             </div>
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - Larger touch targets on mobile */}
           <button 
             onClick={prevImage}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-300 opacity-0 group-hover:opacity-100"
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-300 opacity-70 md:opacity-0 group-hover:opacity-100"
           >
             <ChevronLeft size={24} />
           </button>
           <button 
             onClick={nextImage}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-300 opacity-0 group-hover:opacity-100"
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-300 opacity-70 md:opacity-0 group-hover:opacity-100"
           >
             <ChevronRight size={24} />
           </button>
@@ -195,8 +195,8 @@ const ItineraryPackage = () => {
           </div>
         </div>
 
-        {/* Thumbnail Gallery */}
-        <div className="grid grid-cols-5 gap-4 mb-8">
+        {/* Thumbnail Gallery - Hide on small screens, show on medium and up */}
+        <div className="hidden md:grid grid-cols-5 gap-4 mb-8">
           {packageImages.map((image, index) => (
             <button
               key={index}
@@ -214,31 +214,32 @@ const ItineraryPackage = () => {
           ))}
         </div>
 
-        {/* Package Details Card - Simple and Clean Design */}
-        <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 mb-12">
+        {/* Package Details Card - Mobile Optimized */}
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 mb-8 md:mb-12">
           {/* Top Banner */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-8 py-3">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 md:px-8 py-3">
             <span className="text-blue-700 font-medium">Featured Package</span>
           </div>
 
-          <div className="px-8 py-6">
-            <div className="flex items-start justify-between">
+          <div className="px-4 md:px-8 py-4 md:py-6">
+            {/* Mobile Layout - Stack vertically */}
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between">
               {/* Left Side - Package Info */}
               <div className="flex-1">
                 {/* Title Section */}
-                <div className="flex items-center gap-3 mb-8">
+                <div className="flex items-center gap-3 mb-4 md:mb-8">
                   <h2 className="text-2xl font-bold text-gray-900">Dubai</h2>
                   <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm">
                     4N/5D
                   </span>
                 </div>
 
-                {/* Features Grid */}
-                <div className="grid grid-cols-2 gap-x-24 gap-y-8">
+                {/* Features Grid - 2 columns on mobile, 2 columns on desktop */}
+                <div className="grid grid-cols-2 gap-x-4 md:gap-x-24 gap-y-6 md:gap-y-8">
                   {/* Hotel */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center">
-                      <FaHotel className="text-amber-500 text-xl" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-amber-50 flex items-center justify-center">
+                      <FaHotel className="text-amber-500 text-lg md:text-xl" />
                     </div>
                     <div>
                       <span className="text-gray-700 font-medium block mb-1">Hotel</span>
@@ -251,9 +252,9 @@ const ItineraryPackage = () => {
                   </div>
 
                   {/* Meals */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center">
-                      <FaUtensils className="text-orange-500 text-xl" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-orange-50 flex items-center justify-center">
+                      <FaUtensils className="text-orange-500 text-lg md:text-xl" />
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-700 font-medium">Meals</span>
@@ -264,9 +265,9 @@ const ItineraryPackage = () => {
                   </div>
 
                   {/* Travel */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center">
-                      <FaPlane className="text-blue-500 text-xl" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-blue-50 flex items-center justify-center">
+                      <FaPlane className="text-blue-500 text-lg md:text-xl" />
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-700 font-medium">Travel</span>
@@ -277,9 +278,9 @@ const ItineraryPackage = () => {
                   </div>
 
                   {/* Hygienic */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center">
-                      <FaShieldAlt className="text-green-500 text-xl" />
+                  <div className="flex items-center gap-3 md:gap-4">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-green-50 flex items-center justify-center">
+                      <FaShieldAlt className="text-green-500 text-lg md:text-xl" />
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-700 font-medium">Hygienic+</span>
@@ -291,24 +292,24 @@ const ItineraryPackage = () => {
                 </div>
               </div>
 
-              {/* Right Side - Pricing and Booking */}
-              <div className="text-right pl-8">
+              {/* Right Side - Pricing and Booking - Full width on mobile */}
+              <div className="mt-6 md:mt-0 md:text-right md:pl-8 border-t pt-4 md:pt-0 md:border-t-0 border-gray-100">
                 <p className="text-gray-600 text-sm mb-1">Book now at</p>
                 <div className="mb-1">
-                  <span className="text-4xl font-bold text-gray-900">$499</span>
+                  <span className="text-3xl md:text-4xl font-bold text-gray-900">$499</span>
                 </div>
                 <p className="text-sm text-gray-500 mb-4">Excl. Tax Per Person</p>
                 
-                <div className="flex gap-3">
+                <div className="flex flex-col md:flex-row gap-3">
                   <button 
                     onClick={() => setShowQuoteModal(true)}
-                    className="bg-[#2B4D6F] text-white font-medium py-3 px-8 rounded-xl hover:bg-[#1a3b5c] transition-all duration-300"
+                    className="bg-[#2B4D6F] text-white font-medium py-3 px-8 rounded-xl hover:bg-[#1a3b5c] transition-all duration-300 w-full md:w-auto"
                   >
                     GET QUOTE
                   </button>
                   <button 
                     onClick={() => navigate('/packages/booking-summary')}
-                    className="bg-emerald-600 text-white font-medium py-3 px-8 rounded-xl hover:bg-emerald-700 transition-all duration-300"
+                    className="bg-emerald-600 text-white font-medium py-3 px-8 rounded-xl hover:bg-emerald-700 transition-all duration-300 w-full md:w-auto"
                   >
                     BOOK NOW
                   </button>
@@ -318,39 +319,39 @@ const ItineraryPackage = () => {
           </div>
 
           {/* Bottom Banner */}
-          <div className="bg-gradient-to-r from-blue-50 to-green-50 px-8 py-3 text-center">
+          <div className="bg-gradient-to-r from-blue-50 to-green-50 px-4 md:px-8 py-3 text-center">
             <span className="text-blue-700">
               <span className="font-medium">Special Offer:</span> Book now and get free airport transfers!
             </span>
           </div>
         </div>
 
-        {/* Itinerary Section */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold mb-2">Itinerary</h1>
+        {/* Itinerary Section - Mobile Optimized */}
+        <div className="mb-8 md:mb-12">
+          <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">Itinerary</h1>
           <p className="text-gray-600">Day wise details of your package</p>
-          <hr className="my-6" />
+          <hr className="my-4 md:my-6" />
 
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {packageData.itinerary.map((day) => (
-              <div key={day.day}>
+              <div key={day.day} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
                 <div className="flex">
-                  <div className="bg-[#2B4D6F] text-white py-2 px-4 font-medium w-24 text-center">
+                  <div className="bg-[#2B4D6F] text-white py-2 px-3 md:px-4 font-medium w-16 md:w-24 text-center text-sm md:text-base">
                     Day {day.day}
                   </div>
-                  <div className="bg-[#F5F8FA] flex-1 py-2 px-4 font-medium">
+                  <div className="bg-[#F5F8FA] flex-1 py-2 px-3 md:px-4 font-medium text-sm md:text-base">
                     {day.title}
                   </div>
                 </div>
-                <div className="mt-4 pl-6 space-y-2">
+                <div className="p-3 md:p-4 md:pl-6 space-y-2 text-sm md:text-base">
                   {day.activities.map((activity, idx) => (
-                    <div key={idx}>
+                    <div key={idx} className="mb-3">
                       <span className="font-medium">{activity.time}: </span>
                       <span className="text-gray-700">{activity.description}</span>
                       {activity.details && (
-                        <ul className="list-disc pl-6 mt-2 space-y-1">
+                        <ul className="list-disc pl-5 md:pl-6 mt-2 space-y-1">
                           {activity.details.map((detail, detailIdx) => (
-                            <li key={detailIdx} className="text-gray-600">
+                            <li key={detailIdx} className="text-gray-600 text-sm">
                               {detail}
                             </li>
                           ))}
@@ -365,52 +366,52 @@ const ItineraryPackage = () => {
 
           <button 
             onClick={() => setExpandedDay(null)} 
-            className="flex items-center justify-center text-blue-600 mt-6 mx-auto gap-2"
+            className="flex items-center justify-center text-blue-600 mt-4 md:mt-6 mx-auto gap-2 bg-blue-50 px-4 py-2 rounded-full md:bg-transparent md:px-0 md:py-0"
           >
             View Full Itinerary
             <ChevronDown className={expandedDay ? 'rotate-180' : ''} />
           </button>
         </div>
 
-        {/* Inclusions & Exclusions Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        {/* Inclusions & Exclusions Grid - Stack on mobile, grid on desktop */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
           {/* Inclusions */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-[#2B4D6F] mb-6">Inclusions</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+            <h2 className="text-xl font-semibold text-[#2B4D6F] mb-4 md:mb-6">Inclusions</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
                 <h3 className="font-medium mb-2">Accommodation:</h3>
-                <ul className="list-disc pl-6 space-y-1">
+                <ul className="list-disc pl-5 md:pl-6 space-y-1">
                   {packageData.inclusions.accommodation.map((item, idx) => (
-                    <li key={idx} className="text-gray-600">{item}</li>
+                    <li key={idx} className="text-gray-600 text-sm md:text-base">{item}</li>
                   ))}
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-2">Meals:</h3>
-                <ul className="list-disc pl-6 space-y-1">
+                <ul className="list-disc pl-5 md:pl-6 space-y-1">
                   {packageData.inclusions.meals.map((item, idx) => (
-                    <li key={idx} className="text-gray-600">{item}</li>
+                    <li key={idx} className="text-gray-600 text-sm md:text-base">{item}</li>
                   ))}
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-2">Transfers:</h3>
-                <ul className="list-disc pl-6 space-y-1">
+                <ul className="list-disc pl-5 md:pl-6 space-y-1">
                   {packageData.inclusions.transfers.map((item, idx) => (
-                    <li key={idx} className="text-gray-600">{item}</li>
+                    <li key={idx} className="text-gray-600 text-sm md:text-base">{item}</li>
                   ))}
                 </ul>
               </div>
 
               <div>
                 <h3 className="font-medium mb-2">Tours & Activities:</h3>
-                <ul className="list-disc pl-6 space-y-1">
+                <ul className="list-disc pl-5 md:pl-6 space-y-1">
                   {packageData.inclusions.tours_activities.map((item, idx) => (
-                    <li key={idx} className="text-gray-600">{item}</li>
+                    <li key={idx} className="text-gray-600 text-sm md:text-base">{item}</li>
                   ))}
                 </ul>
               </div>
@@ -418,16 +419,16 @@ const ItineraryPackage = () => {
           </div>
 
           {/* Exclusions */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-[#2B4D6F] mb-6">Exclusions</h2>
+          <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
+            <h2 className="text-xl font-semibold text-[#2B4D6F] mb-4 md:mb-6">Exclusions</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {Object.entries(packageData.exclusions).map(([category, items]) => (
                 <div key={category}>
                   <h3 className="font-medium mb-2">{category.replace('_', ' ')}:</h3>
-                  <ul className="list-disc pl-6 space-y-1">
+                  <ul className="list-disc pl-5 md:pl-6 space-y-1">
                     {items.map((item, idx) => (
-                      <li key={idx} className="text-gray-600">{item}</li>
+                      <li key={idx} className="text-gray-600 text-sm md:text-base">{item}</li>
                     ))}
                   </ul>
                 </div>
@@ -436,20 +437,20 @@ const ItineraryPackage = () => {
           </div>
         </div>
 
-        {/* Contact Form */}
-        <div className="max-w-md mx-auto bg-[#F5FFFF] rounded-lg p-6 border border-gray-100 mb-12">
-          <h3 className="text-center text-[#2B4D6F] font-medium mb-6">
+        {/* Contact Form - Mobile Optimized */}
+        <div className="max-w-md mx-auto bg-[#F5FFFF] rounded-lg p-4 md:p-6 border border-gray-100 mb-8 md:mb-12">
+          <h3 className="text-center text-[#2B4D6F] font-medium mb-4 md:mb-6">
             Your Trip, Your Way - Let's Plan Together!
           </h3>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
             <input
               type="text"
               name="name"
               placeholder="e.g. John Smith"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base"
             />
             
             <input
@@ -458,7 +459,7 @@ const ItineraryPackage = () => {
               placeholder="john@example.com"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base"
             />
             
             <input
@@ -467,7 +468,7 @@ const ItineraryPackage = () => {
               placeholder="Enter your 10 digit number"
               value={formData.phone}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base"
             />
             
             <input
@@ -476,10 +477,10 @@ const ItineraryPackage = () => {
               placeholder="Any Special Request"
               value={formData.request}
               onChange={handleInputChange}
-              className="w-full p-3 border border-gray-300 rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base"
             />
             
-            <div className="border border-gray-300 rounded p-3 flex items-start">
+            <div className="border border-gray-300 rounded-lg p-3 flex items-start">
               <div className="flex items-center h-5">
                 <input
                   id="robot"
@@ -487,7 +488,7 @@ const ItineraryPackage = () => {
                   type="checkbox"
                   checked={formData.isRobot}
                   onChange={handleInputChange}
-                  className="w-4 h-4 border border-gray-300 rounded text-blue-600 focus:ring-blue-500"
+                  className="w-5 h-5 border border-gray-300 rounded text-blue-600 focus:ring-blue-500"
                 />
               </div>
               <label htmlFor="robot" className="ml-2 text-sm text-gray-600">
@@ -501,19 +502,19 @@ const ItineraryPackage = () => {
             
             <button 
               type="submit"
-              className="w-full bg-[#2B4D6F] text-white py-3 rounded font-medium hover:bg-[#1a3b5c] transition-colors"
+              className="w-full bg-[#2B4D6F] text-white py-3 rounded-lg font-medium hover:bg-[#1a3b5c] transition-colors text-base"
             >
               Request Call Back
             </button>
           </form>
         </div>
 
-        {/* Trending Destinations */}
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-center mb-1">Trending destinations</h2>
-          <p className="text-center text-gray-600 mb-8">Most Popular choices for travelers from Kashmir India</p>
+        {/* Trending Destinations - Mobile Optimized */}
+        <div className="mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-1">Trending destinations</h2>
+          <p className="text-center text-gray-600 mb-6 md:mb-8 text-sm md:text-base">Most Popular choices for travelers from Kashmir India</p>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
             {[
               { 
                 name: 'Mughal Garden', 
@@ -537,14 +538,14 @@ const ItineraryPackage = () => {
               }
             ].map((destination) => (
               <div key={destination.name} className="text-center group">
-                <div className="rounded-lg overflow-hidden mb-2 aspect-w-4 aspect-h-3">
+                <div className="rounded-lg overflow-hidden mb-1 md:mb-2 aspect-w-4 aspect-h-3">
                   <img 
                     src={destination.image} 
                     alt={destination.name}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-32 md:h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                 </div>
-                <h3 className="font-medium text-lg">{destination.name}</h3>
+                <h3 className="font-medium text-base md:text-lg">{destination.name}</h3>
               </div>
             ))}
           </div>
@@ -552,14 +553,14 @@ const ItineraryPackage = () => {
 
         {/* Quote Request Modal */}
         {showQuoteModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-3 md:p-4">
             <div className="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden animate-fade-in">
-              {/* Close button */}
+              {/* Close button - Larger for mobile */}
               <button 
                 onClick={() => setShowQuoteModal(false)} 
-                className="absolute top-3 right-3 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow-md transition-all"
+                className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-white/90 hover:bg-white shadow-md transition-all"
               >
-                <X size={16} />
+                <X size={18} />
               </button>
               
               {/* Popup Header with gradient */}
@@ -655,7 +656,7 @@ const ItineraryPackage = () => {
                             id="phone"
                             type="tel"
                             name="phone"
-                            placeholder="Phone Number"
+                            placeholder="Enter your 10 digit number"
                             value={formData.phone}
                             onChange={handleInputChange}
                             className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-100"

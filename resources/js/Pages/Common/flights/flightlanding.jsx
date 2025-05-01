@@ -48,18 +48,185 @@ export default function FlightLanding() {
   
   // 
 
-  // Map city names to IATA codes (this is a simplified example)
+  // Map city names to IATA codes
   const cityToIATACode = {
+    // Indian Cities
     "New Delhi": "DEL",
     "Mumbai": "BOM",
     "Bangalore": "BLR",
     "Chennai": "MAA",
     "Hyderabad": "HYD",
     "Kolkata": "CCU",
-    "Dubai": "DXB",
-    "Singapore": "SIN",
+    "Ahmedabad": "AMD",
+    "Pune": "PNQ",
+    "Goa": "GOI",
+    "Jaipur": "JAI",
+    "Lucknow": "LKO",
+    "Kochi": "COK",
+    "Thiruvananthapuram": "TRV",
+    "Guwahati": "GAU",
+    "Varanasi": "VNS",
+    "Amritsar": "ATQ",
+    "Bhopal": "BHO",
+    "Indore": "IDR",
+    "Patna": "PAT",
+    "Bhubaneswar": "BBI",
+    "Nagpur": "NAG",
+    "Vadodara": "BDQ",
+    "Surat": "STV",
+    "Visakhapatnam": "VTZ",
+    "Coimbatore": "CJB",
+    "Mangalore": "IXE",
+    "Madurai": "IXM",
+    "Tiruchirappalli": "TRZ",
+    "Dehradun": "DED",
+    "Srinagar": "SXR",
+    "Chandigarh": "IXC",
+    "Aurangabad": "IXU",
+    "Jammu": "IXJ",
+    "Ranchi": "IXR",
+    "Bagdogra": "IXB",
+    "Port Blair": "IXZ",
+    "Agartala": "IXA",
+    "Allahabad": "IXD",
+    "Belgaum": "IXG",
+    "Kailashahar": "IXH",
+    "Lilabari": "IXI",
+    "Keshod": "IXK",
+    "Leh": "IXL",
+    "Khowai": "IXN",
+    "Pathankot": "IXP",
+    "Kamalpur": "IXQ",
+    "Silchar": "IXS",
+    "Pasighat": "IXT",
+    "Along": "IXV",
+    "Jamshedpur": "IXW",
+    "Kandla": "IXY",
+
+    // US Cities
+    "New York": "JFK",
+    "Los Angeles": "LAX",
+    "Chicago": "ORD",
+    "San Francisco": "SFO",
+    "Miami": "MIA",
+    "Dallas": "DFW",
+    "Boston": "BOS",
+    "Seattle": "SEA",
+    "Washington DC": "IAD",
+    "Atlanta": "ATL",
+    "Houston": "IAH",
+    "Las Vegas": "LAS",
+    "Orlando": "MCO",
+    "Denver": "DEN",
+    "Philadelphia": "PHL",
+    "Newark": "EWR",
+    "Detroit": "DTW",
+    "Minneapolis": "MSP",
+    "Charlotte": "CLT",
+    "Phoenix": "PHX",
+    "Salt Lake City": "SLC",
+    "Baltimore": "BWI",
+    "San Diego": "SAN",
+    "Tampa": "TPA",
+    "Portland": "PDX",
+    "Honolulu": "HNL",
+    "Austin": "AUS",
+    "Nashville": "BNA",
+    "New Orleans": "MSY",
+    "Pittsburgh": "PIT",
+
+    // UK Cities
     "London": "LHR",
-    "New York": "JFK"
+    "Manchester": "MAN",
+    "Birmingham": "BHX",
+    "Glasgow": "GLA",
+    "Edinburgh": "EDI",
+    "Bristol": "BRS",
+    "Newcastle": "NCL",
+    "Liverpool": "LPL",
+    "Leeds": "LBA",
+    "Belfast": "BFS",
+    "London Luton": "LTN",
+    "London Stansted": "STN",
+    "London Gatwick": "LGW",
+    "London City": "LCY",
+    "East Midlands": "EMA",
+    "Southampton": "SOU",
+    "Aberdeen": "ABZ",
+    "Belfast City": "BHD",
+    "Cardiff": "CWL",
+    "Doncaster": "DSA",
+    "Exeter": "EXT",
+    "Humberside": "HUY",
+    "Inverness": "INV",
+    "Norwich": "NWI",
+    "Durham": "MME",
+
+    // Middle East
+    "Dubai": "DXB",
+    "Abu Dhabi": "AUH",
+    "Doha": "DOH",
+    "Riyadh": "RUH",
+    "Jeddah": "JED",
+    "Muscat": "MCT",
+    "Kuwait": "KWI",
+    "Bahrain": "BAH",
+    "Beirut": "BEY",
+    "Amman": "AMM",
+
+    // Asia Pacific
+    "Singapore": "SIN",
+    "Bangkok": "BKK",
+    "Hong Kong": "HKG",
+    "Tokyo": "HND",
+    "Seoul": "ICN",
+    "Shanghai": "PVG",
+    "Beijing": "PEK",
+    "Sydney": "SYD",
+    "Melbourne": "MEL",
+    "Auckland": "AKL",
+    "Kuala Lumpur": "KUL",
+    "Jakarta": "CGK",
+    "Manila": "MNL",
+    "Ho Chi Minh City": "SGN",
+    "Hanoi": "HAN",
+    "Taipei": "TPE",
+    "Osaka": "KIX",
+    "Nagoya": "NGO",
+    "Fukuoka": "FUK",
+    "Sapporo": "CTS",
+
+    // Europe
+    "Paris": "CDG",
+    "Frankfurt": "FRA",
+    "Amsterdam": "AMS",
+    "Rome": "FCO",
+    "Madrid": "MAD",
+    "Istanbul": "IST",
+    "Munich": "MUC",
+    "Zurich": "ZRH",
+    "Vienna": "VIE",
+    "Brussels": "BRU",
+    "Copenhagen": "CPH",
+    "Stockholm": "ARN",
+    "Oslo": "OSL",
+    "Helsinki": "HEL",
+    "Dublin": "DUB",
+    "Lisbon": "LIS",
+    "Barcelona": "BCN",
+    "Milan": "MXP",
+    "Venice": "VCE",
+    "Prague": "PRG",
+    "Budapest": "BUD",
+    "Warsaw": "WAW",
+    "Athens": "ATH",
+    "Geneva": "GVA",
+    "Lyon": "LYS",
+    "Nice": "NCE",
+    "Berlin": "BER",
+    "Hamburg": "HAM",
+    "Cologne": "CGN",
+    "Düsseldorf": "DUS"
   };
 
   const handleSearch = async (formData) => {
@@ -174,18 +341,27 @@ export default function FlightLanding() {
         <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 z-10">
           <div className="container mx-auto">
             <div className="max-w-[700px] animate-fade-in-up">
-              <div className="flex items-center mb-4">
-                <div className="h-0.5 w-16 bg-blue-400 mr-4"></div>
-                <h2 className="text-blue-300 text-xl font-light tracking-wider uppercase">
-                  <span className="font-script">Explore the World</span>
-                </h2>
-              </div>
-              <h1 className="text-white text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                Find Your <span className="text-blue-300">Perfect Flight</span> Today
-              </h1>
-              <p className="text-gray-200 text-lg mb-10 max-w-xl">
-                Discover amazing deals on flights to destinations worldwide. Book with confidence and travel with peace of mind.
-              </p>
+              {/* Hero/Header Section */}
+              {typeof window !== 'undefined' && window.innerWidth < 768 ? (
+                <div className="mb-6 mt-60">
+                  <p className="text-white text-lg font-semibold italic text-center drop-shadow-md">Travel is the only thing you buy that makes you richer.</p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center mb-4">
+                    <div className="h-0.5 w-16 bg-blue-400 mr-4"></div>
+                    <h2 className="text-blue-300 text-xl font-light tracking-wider uppercase">
+                      <span className="font-script">Explore the World</span>
+                    </h2>
+                  </div>
+                  <h1 className="text-white text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Find Your <span className="text-blue-300">Perfect Flight</span> Today
+                  </h1>
+                  <p className="text-gray-200 text-lg mb-10 max-w-xl">
+                    Discover amazing deals on flights to destinations worldwide. Book with confidence and travel with peace of mind.
+                  </p>
+                </>
+              )}
               
               {/* <div className="bg-white/10 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-white/20 transform hover:scale-[1.01] transition-transform duration-300"> */}
                 <FlightSearchForm onSearch={handleSearch} />

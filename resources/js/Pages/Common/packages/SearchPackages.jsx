@@ -140,131 +140,116 @@ const SearchPackages = () => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       
-      {/* Search Header with Back Button */}
+      {/* Search Header */}
       <div className="bg-white shadow-md sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col space-y-4">
-            {/* Back Button Row */}
-            <div className={`flex items-center transition-all duration-300 ${
-              isTyping ? 'opacity-0 h-0 invisible' : 'opacity-100 h-auto visible'
-            }`}>
-              <button
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:text-blue-600 transition-colors duration-300"
-              >
-                <ArrowRight className="rotate-180" size={20} />
-                <span className="font-medium">Back to Home</span>
-              </button>
+        <div className="container mx-auto px-4 py-4 md:py-5">
+          {/* Search Form Row */}
+          <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            {/* Enhanced Search Input */}
+            <div className="relative flex-1 w-full group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search 
+                  className={`transition-all duration-300 ${
+                    isSearching 
+                      ? 'text-blue-500 animate-spin' 
+                      : 'text-gray-400 group-hover:text-blue-500 group-focus-within:text-blue-500'
+                  }`}
+                  size={20} 
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Search destinations, packages..."
+                value={searchQuery}
+                onChange={handleSearchInput}
+                className="w-full pl-12 pr-12 py-3.5 rounded-lg border border-gray-200 
+                  focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                  hover:border-blue-300 transition-all duration-300
+                  placeholder-gray-400 text-gray-700 text-base"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setIsTyping(false)
+                    if (typingTimeout) {
+                      clearTimeout(typingTimeout)
+                    }
+                  }}
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 
+                    hover:text-blue-500 transition-colors duration-300"
+                >
+                  <X size={18} />
+                </button>
+              )}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-blue-500 
+                group-hover:w-[calc(100%-2rem)] group-focus-within:w-[calc(100%-2rem)] 
+                transition-all duration-300 rounded-full"
+              ></div>
             </div>
 
-            {/* Search Form Row */}
-            <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-4 items-center justify-between">
-              {/* Enhanced Search Input */}
-              <div className="relative flex-1 w-full group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search 
-                    className={`transition-all duration-300 ${
-                      isSearching 
-                        ? 'text-blue-500 animate-spin' 
-                        : 'text-gray-400 group-hover:text-blue-500 group-focus-within:text-blue-500'
-                    }`}
-                    size={20} 
-                  />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search destinations, packages, or activities..."
-                  value={searchQuery}
-                  onChange={handleSearchInput}
-                  className="w-full pl-12 pr-12 py-3 rounded-lg border border-gray-200 
-                    focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                    hover:border-blue-300 transition-all duration-300
-                    placeholder-gray-400 text-gray-700"
+            {/* Filters - Stack on mobile, row on desktop */}
+            <div className="flex flex-col md:flex-row w-full md:w-auto gap-4 items-center">
+              {/* Package Type Filter */}
+              <div className="relative w-full md:min-w-[180px] group">
+                <select
+                  value={selectedPackageType}
+                  onChange={(e) => setSelectedPackageType(e.target.value)}
+                  className="w-full px-4 py-3.5 rounded-lg border border-gray-200 bg-white pr-10 
+                    cursor-pointer hover:border-blue-500 focus:ring-2 focus:ring-blue-500 
+                    focus:border-blue-500 transition-all appearance-none text-base"
+                >
+                  {packageTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                <ChevronDown 
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 
+                    pointer-events-none group-hover:text-blue-500 transition-colors duration-300" 
+                  size={20} 
                 />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery("")
-                      setIsTyping(false)
-                      if (typingTimeout) {
-                        clearTimeout(typingTimeout)
-                      }
-                    }}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 
-                      hover:text-blue-500 transition-colors duration-300"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-blue-500 
-                  group-hover:w-[calc(100%-2rem)] group-focus-within:w-[calc(100%-2rem)] 
-                  transition-all duration-300 rounded-full"
-                ></div>
               </div>
 
-              {/* Filters */}
-              <div className="flex gap-4 items-center">
-                {/* Package Type Filter */}
-                <div className="relative min-w-[180px] group">
-                  <select
-                    value={selectedPackageType}
-                    onChange={(e) => setSelectedPackageType(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white pr-10 
-                      cursor-pointer hover:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                      focus:border-blue-500 transition-all appearance-none"
-                  >
-                    {packageTypes.map((type) => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
-                  </select>
-                  <ChevronDown 
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 
-                      pointer-events-none group-hover:text-blue-500 transition-colors duration-300" 
-                    size={20} 
-                  />
-                </div>
-
-                {/* Sort Filter */}
-                <div className="relative min-w-[180px] group">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white pr-10 
-                      cursor-pointer hover:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                      focus:border-blue-500 transition-all appearance-none"
-                  >
-                    {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    ))}
-                  </select>
-                  <ChevronDown 
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 
-                      pointer-events-none group-hover:text-blue-500 transition-colors duration-300" 
-                    size={20} 
-                  />
-                </div>
+              {/* Sort Filter */}
+              <div className="relative w-full md:min-w-[180px] group">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-3.5 rounded-lg border border-gray-200 bg-white pr-10 
+                    cursor-pointer hover:border-blue-500 focus:ring-2 focus:ring-blue-500 
+                    focus:border-blue-500 transition-all appearance-none text-base"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+                <ChevronDown 
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 
+                    pointer-events-none group-hover:text-blue-500 transition-colors duration-300" 
+                  size={20} 
+                />
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
 
       {/* Results Section */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 md:py-8">
         {/* Results Count & Clear Filters */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 md:mb-6 gap-2 md:gap-0">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-800">
             {isSearching ? (
               <span className="inline-flex items-center gap-2">
-                <Plane className="animate-bounce" size={24} />
+                <Plane className="animate-bounce" size={20} />
                 Searching...
               </span>
             ) : (
               <span className="inline-flex items-center gap-2">
                 {filteredPackages.length} packages found
                 {searchQuery && (
-                  <span className="text-gray-500 text-base font-normal">
+                  <span className="text-gray-500 text-sm md:text-base font-normal">
                     for "{searchQuery}"
                   </span>
                 )}
@@ -277,7 +262,7 @@ const SearchPackages = () => {
                 setSearchQuery("")
                 setSelectedPackageType("All Inclusive")
               }}
-              className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
+              className="text-blue-600 hover:text-blue-700 flex items-center gap-2 text-sm md:text-base"
             >
               <X size={16} />
               Clear filters
@@ -285,18 +270,18 @@ const SearchPackages = () => {
           )}
         </div>
 
-        {/* Package Grid */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 
+        {/* Package Grid - Adjust columns for different screen sizes */}
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 
           transition-opacity duration-300 ${isSearching ? 'opacity-50' : 'opacity-100'}`}
         >
           {filteredPackages.map((pkg) => (
             <div
               key={pkg.id}
-              className="group bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl 
+              className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl 
                 transition-all duration-500 transform hover:-translate-y-1"
             >
               {/* Package Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-40 md:h-48 overflow-hidden">
                 <img
                   src={pkg.image}
                   alt={pkg.title}
@@ -304,13 +289,13 @@ const SearchPackages = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
                 
-                {/* Like Button */}
+                {/* Like Button - Larger touch target on mobile */}
                 <button
                   onClick={(e) => {
                     e.preventDefault()
                     toggleLike(pkg.id)
                   }}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 transform hover:scale-110"
+                  className="absolute top-3 md:top-4 right-3 md:right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40 transition-all duration-300 transform hover:scale-110"
                 >
                   <Heart
                     size={20}
@@ -320,31 +305,31 @@ const SearchPackages = () => {
 
                 {/* Discount Tag */}
                 {pkg.discount && (
-                  <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium transform -rotate-2 animate-pulse">
+                  <div className="absolute top-3 md:top-4 left-3 md:left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs md:text-sm font-medium transform -rotate-2 animate-pulse">
                     {pkg.discount}% OFF
                   </div>
                 )}
 
                 {/* Package Info Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h3 className="text-white font-semibold text-lg mb-1">{pkg.title}</h3>
+                <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                  <h3 className="text-white font-semibold text-base md:text-lg mb-0.5 md:mb-1">{pkg.title}</h3>
                   {pkg.location && (
                     <div className="flex items-center gap-1 text-white/90">
-                      <MapPin size={16} />
-                      <span className="text-sm">{pkg.location}</span>
+                      <MapPin size={14} className="md:w-4 md:h-4" />
+                      <span className="text-xs md:text-sm">{pkg.location}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Package Details */}
-              <div className="p-4">
+              <div className="p-3 md:p-4">
                 {/* Features */}
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-1 md:gap-2 mb-2 md:mb-3">
                   {pkg.features?.slice(0, 3).map((feature, idx) => (
                     <span
                       key={idx}
-                      className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full"
+                      className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 md:py-1 rounded-full"
                     >
                       {feature}
                     </span>
@@ -352,30 +337,30 @@ const SearchPackages = () => {
                 </div>
 
                 {/* Rating & Duration */}
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2 md:mb-3">
                   <div className="flex items-center gap-1">
-                    <Star className="text-yellow-400 fill-yellow-400" size={16} />
-                    <span className="text-sm font-medium">{pkg.rating}</span>
-                    <span className="text-gray-500 text-sm">({pkg.reviews})</span>
+                    <Star className="text-yellow-400 fill-yellow-400" size={14} />
+                    <span className="text-xs md:text-sm font-medium">{pkg.rating}</span>
+                    <span className="text-gray-500 text-xs md:text-sm">({pkg.reviews})</span>
                   </div>
                   <div className="flex items-center gap-1 text-gray-500">
-                    <Clock size={16} />
-                    <span className="text-sm">{pkg.duration}</span>
+                    <Clock size={14} />
+                    <span className="text-xs md:text-sm">{pkg.duration}</span>
                   </div>
                 </div>
 
                 {/* Price & CTA */}
-                <div className="flex items-end justify-between border-t pt-3">
+                <div className="flex items-end justify-between border-t pt-2 md:pt-3">
                   <div>
-                    <p className="text-gray-500 text-sm">Starting from</p>
-                    <div className="flex items-center gap-1">
-                      <DollarSign size={18} className="text-blue-600" />
-                      <span className="text-2xl font-bold text-blue-600">{pkg.price}</span>
+                    <p className="text-gray-500 text-xs md:text-sm">Starting from</p>
+                    <div className="flex items-center gap-0.5 md:gap-1">
+                      <DollarSign size={16} className="text-blue-600" />
+                      <span className="text-xl md:text-2xl font-bold text-blue-600">{pkg.price}</span>
                     </div>
                   </div>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-1 text-sm font-medium group">
+                  <button className="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg flex items-center gap-1 text-xs md:text-sm font-medium group">
                     View Details
-                    <ArrowRight size={16} />
+                    <ArrowRight size={14} className="md:w-4 md:h-4" />
                   </button>
                 </div>
               </div>
@@ -385,10 +370,10 @@ const SearchPackages = () => {
 
         {/* No Results */}
         {!isSearching && filteredPackages.length === 0 && (
-          <div className="text-center py-12">
-            <Plane className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">No packages found</h3>
-            <p className="text-gray-600">
+          <div className="text-center py-8 md:py-12">
+            <Plane className="mx-auto text-gray-400 mb-4" size={36} />
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">No packages found</h3>
+            <p className="text-gray-600 text-sm md:text-base">
               {searchQuery ? (
                 <>
                   No results found for "{searchQuery}". Try different keywords or 

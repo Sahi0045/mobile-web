@@ -25,7 +25,7 @@ const TravelPackages = () => {
     })),
     ...(packagesData.europe?.packages || []).map(pkg => ({
       ...pkg,
-      image: pkg.id === 1 ? "https://images.unsplash.com/photo-1493707553966-283afac8c358?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80" :
+      image: pkg.id === 1 ? "https://images.unsplash.com/photo-1493707553966-392fe2489ffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80" :
              pkg.id === 2 ? "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80" :
              "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2336&q=80"
     })),
@@ -254,49 +254,140 @@ const TravelPackages = () => {
       
       {/* Hero Section */}
       <section
-        className="relative h-[75vh] flex items-center justify-center overflow-hidden"
+        className="relative h-[100vh] md:h-[75vh] flex items-center justify-center overflow-hidden"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center 30%", // Improved positioning for mobile
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
+        {/* Mobile-specific background for better visibility */}
+        <div className="absolute inset-0 md:hidden bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
+        {/* Desktop background overlay */}
+        <div className="absolute inset-0 hidden md:block bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
 
         <div className="container mx-auto px-4 z-10">
-          <div className="text-center mb-8 animate-fadeIn">
-            <h1 className="text-5xl md:text-7xl font-bold mb-4 text-white drop-shadow-lg">
+          <div className="text-center mb-6 md:mb-8 animate-fadeIn">
+            <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 text-white drop-shadow-lg">
               Discover Your Next Adventure
             </h1>
-            <p className="text-xl md:text-2xl text-gray-100 drop-shadow-md">
+            <p className="text-base md:text-xl lg:text-2xl text-white font-medium drop-shadow-md px-2 md:px-0 max-w-3xl mx-auto">
               Explore our handpicked destinations and create unforgettable memories
             </p>
           </div>
 
-          <form onSubmit={handleSearch} className="bg-white/95 backdrop-blur-sm rounded-xl p-8 max-w-5xl mx-auto shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Destination</label>
+          {/* Mobile Form - Shown only on small screens */}
+          <form onSubmit={handleSearch} className="md:hidden bg-white/95 backdrop-blur-sm rounded-xl p-6 max-w-5xl mx-auto shadow-2xl">
+            <div className="flex flex-col gap-6">
+              <div className="w-full">
+                <label className="block text-gray-800 text-base font-medium mb-2">Destination</label>
                 <div className="relative">
                   <input
                     type="text"
                     placeholder="Where do you want to go?"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full p-3 pl-10 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base"
+                  />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500" size={20} />
+                </div>
+              </div>
+
+              <div className="w-full">
+                <label className="block text-gray-800 text-base font-medium mb-2">Package Type</label>
+                <div className="relative">
+                  <select
+                    value={selectedPackageType}
+                    onChange={(e) => setSelectedPackageType(e.target.value)}
+                    className="w-full p-3 pr-10 border border-gray-200 rounded-lg appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base"
+                  >
+                    {packageTypes.map(type => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500" size={20} />
+                </div>
+              </div>
+
+              <div className="w-full">
+                <label className="block text-gray-800 text-base font-medium mb-2">Travel Date</label>
+                <div className="relative">
+                  <div className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-blue-500 cursor-pointer transition-all text-base">
+                    <span>Select dates</span>
+                    <Calendar size={20} className="text-blue-500" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full">
+                <label className="block text-gray-800 text-base font-medium mb-2">Travelers</label>
+                <div className="relative">
+                  <div 
+                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-blue-500 cursor-pointer transition-all text-base"
+                    onClick={() => setShowTravelersDropdown(!showTravelersDropdown)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Users size={20} className="text-blue-500" />
+                      <span>{travelers} Traveler{travelers !== 1 ? 's' : ''}</span>
+                    </div>
+                    <ChevronDown size={20} className="text-blue-500" />
+                  </div>
+                  {showTravelersDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border z-50">
+                      {[1, 2, 3, 4, 5, 6].map((num) => (
+                        <div
+                          key={`traveler-${num}`}
+                          className="px-4 py-3 hover:bg-blue-50 cursor-pointer flex items-center justify-between text-base"
+                          onClick={() => {
+                            setTravelers(num)
+                            setShowTravelersDropdown(false)
+                          }}
+                        >
+                          <span>{num} Traveler{num !== 1 ? 's' : ''}</span>
+                          {travelers === num && <Star size={16} className="text-blue-500" />}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="w-full">
+                <button type="submit" className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 group font-medium shadow-md text-base">
+                  <Search size={20} />
+                  <span className="group-hover:translate-x-1 transition-transform">
+                    Search
+                  </span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          {/* Desktop Form - Original layout preserved */}
+          <form onSubmit={handleSearch} className="hidden md:block bg-white/95 backdrop-blur-sm rounded-xl p-8 max-w-5xl mx-auto shadow-2xl transform hover:scale-[1.02] transition-all duration-300">
+            <div className="flex flex-row gap-6">
+              <div className="flex-1">
+                <label className="block text-gray-700 text-sm font-medium mb-1">Destination</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Where do you want to go?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full p-3 pl-10 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base"
                   />
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 </div>
               </div>
 
               <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Package Type</label>
+                <label className="block text-gray-700 text-sm font-medium mb-1">Package Type</label>
                 <div className="relative">
                   <select
                     value={selectedPackageType}
                     onChange={(e) => setSelectedPackageType(e.target.value)}
-                    className="w-full p-3 border rounded-md appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="w-full p-3 border rounded-md appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-base"
                   >
                     {packageTypes.map(type => (
                       <option key={type} value={type}>{type}</option>
@@ -307,9 +398,9 @@ const TravelPackages = () => {
               </div>
 
               <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Travel Date</label>
+                <label className="block text-gray-700 text-sm font-medium mb-1">Travel Date</label>
                 <div className="relative">
-                  <div className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all">
+                  <div className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all text-base">
                     <span>Select dates</span>
                     <Calendar size={18} className="text-gray-500" />
                   </div>
@@ -317,13 +408,13 @@ const TravelPackages = () => {
               </div>
 
               <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Travelers</label>
+                <label className="block text-gray-700 text-sm font-medium mb-1">Travelers</label>
                 <div className="relative">
                   <div 
-                    className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all"
+                    className="flex items-center justify-between p-3 border rounded-md hover:border-blue-500 cursor-pointer transition-all text-base"
                     onClick={() => setShowTravelersDropdown(!showTravelersDropdown)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Users size={18} className="text-gray-500" />
                       <span>{travelers} Traveler{travelers !== 1 ? 's' : ''}</span>
                     </div>
@@ -334,7 +425,7 @@ const TravelPackages = () => {
                       {[1, 2, 3, 4, 5, 6].map((num) => (
                         <div
                           key={`traveler-${num}`}
-                          className="px-4 py-2 hover:bg-blue-50 cursor-pointer flex items-center justify-between"
+                          className="px-4 py-2.5 hover:bg-blue-50 cursor-pointer flex items-center justify-between text-sm"
                           onClick={() => {
                             setTravelers(num)
                             setShowTravelersDropdown(false)
@@ -350,9 +441,9 @@ const TravelPackages = () => {
               </div>
 
               <div className="flex items-end">
-                <button type="submit" className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-all duration-300 flex items-center gap-2 group">
-                  <Search size={20} />
-                  <span className="hidden md:inline group-hover:translate-x-1 transition-transform">
+                <button type="submit" className="w-auto bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition-all duration-300 flex items-center justify-center gap-2 group font-medium">
+                  <Search size={18} />
+                  <span className="text-base group-hover:translate-x-1 transition-transform">
                     Search
                   </span>
                 </button>
@@ -361,10 +452,10 @@ const TravelPackages = () => {
           </form>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        {/* Scroll Indicator - Only visible on desktop */}
+        <div className="absolute bottom-8 hidden md:block left-1/2 -translate-x-1/2 animate-bounce">
           <div className="w-8 h-12 border-2 border-white rounded-full flex items-center justify-center">
-            <div className="w-1 h-3 bg-white rounded-full animate-scroll"></div>
+            <div className="w-1.5 h-3 bg-white rounded-full animate-scroll"></div>
           </div>
         </div>
       </section>
@@ -408,6 +499,7 @@ const TravelPackages = () => {
                 key={item.id}
                 className="group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white"
               >
+                {/* Package Image */}
                 <div className="relative h-48">
                   <img
                     src={item.image}
@@ -436,13 +528,16 @@ const TravelPackages = () => {
 
                   <div className="absolute bottom-0 left-0 right-0 p-4">
                     <h3 className="text-white font-semibold text-lg mb-1">{item.title}</h3>
-                    <div className="flex items-center gap-2">
-                      <MapPin size={16} className="text-white/80" />
-                      <p className="text-white/80 text-sm">{item.location}</p>
-                    </div>
+                    {item.location && (
+                      <div className="flex items-center gap-2">
+                        <MapPin size={16} className="text-white/80" />
+                        <p className="text-white/80 text-sm">{item.location}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
+                {/* Package Details */}
                 <div className="p-4">
                   {/* Features */}
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -507,7 +602,7 @@ const TravelPackages = () => {
 
       {/* Europe Packages Section */}
       <section className="py-16 bg-[#1e3a5f] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=2020&auto=format&fit=crop')] opacity-10 bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1499856871958-85d111c60e6b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')] opacity-10 bg-cover bg-center"></div>
         <div className="container mx-auto px-4 relative">
           <div className="text-center mb-12">
             <p className="text-blue-300 mb-2 uppercase tracking-wider font-medium">{packagesData.europe.title}</p>
@@ -671,4 +766,3 @@ const TravelPackages = () => {
 };
 
 export default TravelPackages;
-

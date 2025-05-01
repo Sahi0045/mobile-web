@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, ArrowUpDown, Filter, X, Calendar, ArrowRight, ChevronLeft, ChevronRight, Plane } from "lucide-react";
+import { ChevronDown, ArrowUpDown, Filter, X, Calendar, ArrowRight, ChevronLeft, ChevronRight, Plane, Users } from "lucide-react";
 import FlightSearchForm from "./flight-search-form";
 import Navbar from "../Navbar";
 import Footer from "../Footer";
@@ -13,7 +13,6 @@ import {
 } from "./data.js";
 
 export default function FlightSearchPage() {
-  
   const location = useLocation();
   const searchData = location.state?.searchData;
   const apiResponse = location.state?.apiResponse;
@@ -41,6 +40,18 @@ export default function FlightSearchPage() {
   });
   const [error, setError] = useState(null);
   const [expandedFlights, setExpandedFlights] = useState({});
+  const [isMobileView, setIsMobileView] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const flightsPerPage = 10;
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
 
   // Generate date range based on current date
   useEffect(() => {
@@ -201,44 +212,138 @@ export default function FlightSearchPage() {
 
   // City code to name mapping
   const cityMap = {
-    // Metro cities
-    'DEL': 'New Delhi',
-    'BOM': 'Mumbai',
-    'MAA': 'Chennai',
-    'BLR': 'Bengaluru',
-    'HYD': 'Hyderabad',
-    'CCU': 'Kolkata',
-    // Other major cities
-    'PNQ': 'Pune',
-    'AMD': 'Ahmedabad',
-    'COK': 'Kochi',
-    'GOI': 'Goa',
-    'JAI': 'Jaipur',
-    'IXC': 'Chandigarh',
-    'PAT': 'Patna',
-    'LKO': 'Lucknow',
-    'BBI': 'Bhubaneswar',
-    'VTZ': 'Visakhapatnam',
-    'IXM': 'Madurai',
-    'TRV': 'Thiruvananthapuram',
-    // International hubs
-    'DXB': 'Dubai',
-    'SIN': 'Singapore',
-    'BKK': 'Bangkok',
-    'LHR': 'London Heathrow',
-    'JFK': 'New York',
-    'SFO': 'San Francisco',
-    'LAX': 'Los Angeles',
-    'CDG': 'Paris',
-    'FRA': 'Frankfurt',
-    'AMS': 'Amsterdam',
-    'HKG': 'Hong Kong',
-    'NRT': 'Tokyo',
-    'ICN': 'Seoul',
-    'SYD': 'Sydney',
-    'MEL': 'Melbourne',
-    'YYZ': 'Toronto',
-    'YVR': 'Vancouver'
+    // Indian Cities
+    'DEL': 'New Delhi (Indira Gandhi International)',
+    'BOM': 'Mumbai (Chhatrapati Shivaji Maharaj International)',
+    'BLR': 'Bangalore (Kempegowda International)',
+    'MAA': 'Chennai (Chennai International)',
+    'CCU': 'Kolkata (Netaji Subhash Chandra Bose International)',
+    'HYD': 'Hyderabad (Rajiv Gandhi International)',
+    'AMD': 'Ahmedabad (Sardar Vallabhbhai Patel International)',
+    'GOI': 'Goa (Dabolim International)',
+    'JAI': 'Jaipur (Jaipur International)',
+    'LKO': 'Lucknow (Chaudhary Charan Singh International)',
+    'PNQ': 'Pune (Pune International)',
+    'COK': 'Kochi (Cochin International)',
+    'TRV': 'Thiruvananthapuram (Trivandrum International)',
+    'GAU': 'Guwahati (Lokpriya Gopinath Bordoloi International)',
+    'VNS': 'Varanasi (Lal Bahadur Shastri International)',
+    'ATQ': 'Amritsar (Sri Guru Ram Dass Jee International)',
+    'BHO': 'Bhopal (Raja Bhoj International)',
+    'IDR': 'Indore (Devi Ahilya Bai Holkar International)',
+    'PAT': 'Patna (Jay Prakash Narayan International)',
+    'BBI': 'Bhubaneswar (Biju Patnaik International)',
+    'NAG': 'Nagpur (Dr. Babasaheb Ambedkar International)',
+    'BDQ': 'Vadodara (Vadodara International)',
+    'STV': 'Surat (Surat International)',
+    'VTZ': 'Visakhapatnam (Visakhapatnam International)',
+    'CJB': 'Coimbatore (Coimbatore International)',
+    'IXE': 'Mangalore (Mangalore International)',
+    'IXM': 'Madurai (Madurai International)',
+    'TRZ': 'Tiruchirappalli (Tiruchirappalli International)',
+    'DED': 'Dehradun (Dehradun International)',
+    'SXR': 'Srinagar (Srinagar International)',
+    'IXC': 'Chandigarh (Chandigarh International)',
+    'IXU': 'Aurangabad (Aurangabad International)',
+    'IXJ': 'Jammu (Jammu International)',
+    'IXR': 'Ranchi (Birsa Munda International)',
+    'IXB': 'Bagdogra (Bagdogra International)',
+    'IXZ': 'Port Blair (Veer Savarkar International)',
+    'IXA': 'Agartala (Maharaja Bir Bikram International)',
+    'IXD': 'Allahabad (Prayagraj International)',
+    'IXG': 'Belgaum (Belgaum International)',
+    'IXH': 'Kailashahar (Kailashahar Airport)',
+    'IXI': 'Lilabari (Lilabari Airport)',
+    'IXK': 'Keshod (Keshod Airport)',
+    'IXL': 'Leh (Kushok Bakula Rimpochee Airport)',
+    'IXN': 'Khowai (Khowai Airport)',
+    'IXP': 'Pathankot (Pathankot Airport)',
+    'IXQ': 'Kamalpur (Kamalpur Airport)',
+    'IXS': 'Silchar (Silchar Airport)',
+    'IXT': 'Pasighat (Pasighat Airport)',
+    'IXV': 'Along (Along Airport)',
+    'IXW': 'Jamshedpur (Sonari Airport)',
+    'IXY': 'Kandla (Kandla Airport)',
+    'IXZ': 'Port Blair (Veer Savarkar International)',
+
+    // US Cities
+    'JFK': 'New York (John F. Kennedy International)',
+    'LAX': 'Los Angeles (Los Angeles International)',
+    'ORD': 'Chicago (O\'Hare International)',
+    'SFO': 'San Francisco (San Francisco International)',
+    'MIA': 'Miami (Miami International)',
+    'DFW': 'Dallas (Dallas/Fort Worth International)',
+    'BOS': 'Boston (Logan International)',
+    'SEA': 'Seattle (Seattle-Tacoma International)',
+    'IAD': 'Washington DC (Dulles International)',
+    'ATL': 'Atlanta (Hartsfield-Jackson International)',
+    'IAH': 'Houston (George Bush Intercontinental)',
+    'LAS': 'Las Vegas (McCarran International)',
+    'MCO': 'Orlando (Orlando International)',
+    'DEN': 'Denver (Denver International)',
+    'PHL': 'Philadelphia (Philadelphia International)',
+    'EWR': 'Newark (Newark Liberty International)',
+    'DTW': 'Detroit (Detroit Metropolitan)',
+    'MSP': 'Minneapolis (Minneapolis-Saint Paul International)',
+    'CLT': 'Charlotte (Charlotte Douglas International)',
+    'PHX': 'Phoenix (Phoenix Sky Harbor International)',
+    'SLC': 'Salt Lake City (Salt Lake City International)',
+    'BWI': 'Baltimore (Baltimore/Washington International)',
+    'SAN': 'San Diego (San Diego International)',
+    'TPA': 'Tampa (Tampa International)',
+    'PDX': 'Portland (Portland International)',
+    'HNL': 'Honolulu (Daniel K. Inouye International)',
+    'AUS': 'Austin (Austin-Bergstrom International)',
+    'BNA': 'Nashville (Nashville International)',
+    'MSY': 'New Orleans (Louis Armstrong International)',
+    'PIT': 'Pittsburgh (Pittsburgh International)',
+
+    // UK Cities
+    'LHR': 'London (Heathrow International)',
+    'MAN': 'Manchester (Manchester International)',
+    'BHX': 'Birmingham (Birmingham International)',
+    'GLA': 'Glasgow (Glasgow International)',
+    'EDI': 'Edinburgh (Edinburgh International)',
+    'BRS': 'Bristol (Bristol International)',
+    'NCL': 'Newcastle (Newcastle International)',
+    'LPL': 'Liverpool (Liverpool John Lennon)',
+    'LBA': 'Leeds (Leeds Bradford International)',
+    'BFS': 'Belfast (Belfast International)',
+    'LTN': 'London (Luton International)',
+    'STN': 'London (Stansted International)',
+    'LGW': 'London (Gatwick International)',
+    'LCY': 'London (City International)',
+    'EMA': 'East Midlands (East Midlands International)',
+    'SOU': 'Southampton (Southampton International)',
+    'ABZ': 'Aberdeen (Aberdeen International)',
+    'BHD': 'Belfast (George Best Belfast City)',
+    'CWL': 'Cardiff (Cardiff International)',
+    'DSA': 'Doncaster (Doncaster Sheffield)',
+    'EXT': 'Exeter (Exeter International)',
+    'HUY': 'Humberside (Humberside International)',
+    'INV': 'Inverness (Inverness International)',
+    'NWI': 'Norwich (Norwich International)',
+    'MME': 'Durham (Durham Tees Valley International)',
+
+    // Other International Cities
+    'DXB': 'Dubai (Dubai International)',
+    'SIN': 'Singapore (Changi International)',
+    'BKK': 'Bangkok (Suvarnabhumi International)',
+    'CDG': 'Paris (Charles de Gaulle International)',
+    'HND': 'Tokyo (Haneda International)',
+    'SYD': 'Sydney (Kingsford Smith International)',
+    'YYZ': 'Toronto (Pearson International)',
+    'HKG': 'Hong Kong (Hong Kong International)',
+    'FRA': 'Frankfurt (Frankfurt International)',
+    'AMS': 'Amsterdam (Schiphol International)',
+    'FCO': 'Rome (Fiumicino International)',
+    'MAD': 'Madrid (Barajas International)',
+    'IST': 'Istanbul (Istanbul International)',
+    'ICN': 'Seoul (Incheon International)',
+    'PVG': 'Shanghai (Pudong International)',
+    'MEL': 'Melbourne (Melbourne International)',
+    'AKL': 'Auckland (Auckland International)',
+    'CPT': 'Cape Town (Cape Town International)'
   };
 
   // Aircraft code to name mapping
@@ -286,43 +391,57 @@ export default function FlightSearchPage() {
           time: new Date(firstSegment.departure.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
           date: new Date(firstSegment.departure.at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
           airport: firstSegment.departure.iataCode,
-          terminal: firstSegment.departure.terminal || 'T1'
+          terminal: firstSegment.departure.terminal || 'T1',
+          cityName: cityMap[firstSegment.departure.iataCode] || firstSegment.departure.iataCode
         },
         arrival: {
           time: new Date(lastSegment.arrival.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
           date: new Date(lastSegment.arrival.at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
           airport: lastSegment.arrival.iataCode,
-          terminal: lastSegment.arrival.terminal || 'T1'
+          terminal: lastSegment.arrival.terminal || 'T1',
+          cityName: cityMap[lastSegment.arrival.iataCode] || lastSegment.arrival.iataCode
         },
         duration: itinerary.duration,
         stops: segments.length - 1,
         price: {
+          amount: parseFloat(price.total),
           total: price.total,
-          currency: price.currency,
+          currency: price.currency || 'INR',
           base: price.base,
-          fees: price.fees
+          fees: price.fees,
+          formatted: `$${parseFloat(price.total).toLocaleString('en-US')}`
         },
         amenities: offer.travelerPricings[0].fareDetailsBySegment[0].amenities || [],
         baggage: {
           checked: offer.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags || { weight: 0, weightUnit: 'KG' },
           cabin: offer.travelerPricings[0].fareDetailsBySegment[0].includedCabinBags || { weight: 0, weightUnit: 'KG' }
         },
-        cabin: offer.travelerPricings[0].fareDetailsBySegment[0].cabin,
-        class: offer.travelerPricings[0].fareDetailsBySegment[0].class,
+        cabin: offer.travelerPricings[0].fareDetailsBySegment[0].cabin || 'ECONOMY',
+        class: offer.travelerPricings[0].fareDetailsBySegment[0].class || 'ECONOMY',
         segments: segments.map(segment => ({
           departure: {
             time: new Date(segment.departure.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             airport: segment.departure.iataCode,
-            terminal: segment.departure.terminal || 'T1'
+            terminal: segment.departure.terminal || 'T1',
+            cityName: cityMap[segment.departure.iataCode] || segment.departure.iataCode,
+            at: segment.departure.at
           },
           arrival: {
             time: new Date(segment.arrival.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             airport: segment.arrival.iataCode,
-            terminal: segment.arrival.terminal || 'T1'
+            terminal: segment.arrival.terminal || 'T1',
+            cityName: cityMap[segment.arrival.iataCode] || segment.arrival.iataCode,
+            at: segment.arrival.at
+          },
+          airline: {
+            code: segment.carrierCode,
+            name: airlineMap[segment.carrierCode] || segment.carrierCode,
+            logo: `/images/airlines/${segment.carrierCode.toLowerCase()}.png`
           },
           duration: segment.duration,
           flightNumber: `${segment.carrierCode} ${segment.number}`,
-          aircraft: segment.aircraft?.code || 'Unknown'
+          aircraft: aircraftMap[segment.aircraft?.code] || segment.aircraft?.code || 'Unknown Aircraft',
+          stops: 0
         }))
       };
     });
@@ -431,21 +550,23 @@ export default function FlightSearchPage() {
   
   // Apply filters to flights
   const getFilteredFlights = () => {
+    if (!flights || !Array.isArray(flights)) return [];
+    
     return flights.filter(flight => {
       // Filter by price
-      const flightPrice = flight.price.amount;
+      const flightPrice = flight.price?.amount || 0;
       if (flightPrice < filters.price[0] || flightPrice > filters.price[1]) {
         return false;
       }
       
       // Filter by stops
-      if (filters.stops !== "any" && flight.segments[0].stops !== filters.stops) {
+      if (filters.stops !== "any" && String(flight.stops) !== String(filters.stops)) {
         return false;
       }
       
       // Filter by airlines
       if (filters.airlines.length > 0) {
-        const airlineName = flight.segments[0].airline.name;
+        const airlineName = flight.airline?.name;
         if (!filters.airlines.includes(airlineName)) {
           return false;
         }
@@ -454,21 +575,39 @@ export default function FlightSearchPage() {
       return true;
     }).sort((a, b) => {
       // Sort by selected order
-      const aPrice = a.price.amount;
-      const bPrice = b.price.amount;
+      const aPrice = a.price?.amount || 0;
+      const bPrice = b.price?.amount || 0;
       
       if (sortOrder === "price") {
         return aPrice - bPrice;
       } else if (sortOrder === "-price") {
         return bPrice - aPrice;
       } else if (sortOrder === "duration") {
-        const aDuration = a.duration.split("PT")[1].split("H")[0] * 60 + parseInt(a.duration.split("PT")[1].split("H")[1]);
-        const bDuration = b.duration.split("PT")[1].split("H")[0] * 60 + parseInt(b.duration.split("PT")[1].split("H")[1]);
+        // Parse duration of format PT2H45M
+        const parseDuration = (durationStr) => {
+          if (!durationStr) return 0;
+          let hours = 0;
+          let minutes = 0;
+          
+          if (durationStr.includes('H')) {
+            hours = parseInt(durationStr.split('PT')[1].split('H')[0]) || 0;
+            if (durationStr.includes('M')) {
+              minutes = parseInt(durationStr.split('H')[1].split('M')[0]) || 0;
+            }
+          } else if (durationStr.includes('M')) {
+            minutes = parseInt(durationStr.split('PT')[1].split('M')[0]) || 0;
+          }
+          
+          return hours * 60 + minutes;
+        };
+        
+        const aDuration = parseDuration(a.duration);
+        const bDuration = parseDuration(b.duration);
         return aDuration - bDuration;
       } else if (sortOrder === "departure") {
-        return a.segments[0].departure.at.localeCompare(b.segments[0].departure.at);
+        return (a.segments?.[0]?.departure?.at || '').localeCompare(b.segments?.[0]?.departure?.at || '');
       } else if (sortOrder === "arrival") {
-        return a.segments[0].arrival.at.localeCompare(b.segments[0].arrival.at);
+        return (a.segments?.[0]?.arrival?.at || '').localeCompare(b.segments?.[0]?.arrival?.at || '');
       }
       
       return 0;
@@ -585,14 +724,10 @@ export default function FlightSearchPage() {
     handleFilterChange('airlines', updatedAirlines);
   };
 
-  // Get unique airlines from available flights
-  const getUniqueAirlines = () => {
-    if (!flights || !Array.isArray(flights)) return [];
-    
-    return [...new Set(flights
-      .filter(flight => flight?.segments?.[0]?.airline?.name)
-      .map(flight => flight.segments[0].airline.name)
-    )];
+  // Get all airlines for filtering
+  const getAllAirlines = () => {
+    // Return all airlines from the airlineMap
+    return Object.values(airlineMap).sort();
   };
 
   // Handle booking a flight
@@ -606,7 +741,736 @@ export default function FlightSearchPage() {
     });
   };
 
+  // Get city suggestions based on search input
+  const getCitySuggestions = (input, field) => {
+    if (!input) return [];
+    
+    const searchTerm = input.toLowerCase();
+    const currentFrom = field === 'to' ? searchParams.from : null;
+    const currentTo = field === 'from' ? searchParams.to : null;
+    
+    return Object.entries(cityMap)
+      .filter(([code, name]) => {
+        // Skip the current selected city in the other field
+        if ((field === 'to' && code === currentFrom) || 
+            (field === 'from' && code === currentTo)) {
+          return false;
+        }
+        
+        return name.toLowerCase().includes(searchTerm) || 
+               code.toLowerCase().includes(searchTerm);
+      })
+      .map(([code, name]) => ({
+        code,
+        name,
+        country: getCountryByCode(code)
+      }));
+  };
+
+  // Get country by airport code
+  const getCountryByCode = (code) => {
+    // Indian airports
+    if ([
+      'DEL', 'BOM', 'BLR', 'MAA', 'CCU', 'HYD', 'AMD', 'GOI', 'JAI', 'LKO',
+      'PNQ', 'COK', 'TRV', 'GAU', 'VNS', 'ATQ', 'BHO', 'IDR', 'PAT', 'BBI',
+      'NAG', 'BDQ', 'STV', 'VTZ', 'CJB', 'IXE', 'IXM', 'TRZ', 'DED', 'SXR'
+    ].includes(code)) {
+      return 'India';
+    }
+    
+    // US airports
+    if ([
+      'JFK', 'LAX', 'ORD', 'SFO', 'MIA', 'DFW', 'BOS', 'SEA', 'IAD', 'ATL',
+      'IAH', 'LAS', 'MCO', 'DEN', 'PHL'
+    ].includes(code)) {
+      return 'United States';
+    }
+    
+    // UK airports
+    if ([
+      'LHR', 'MAN', 'BHX', 'GLA', 'EDI', 'BRS', 'NCL', 'LPL', 'LBA', 'BFS'
+    ].includes(code)) {
+      return 'United Kingdom';
+    }
+    
+    // Other countries
+    const countryMap = {
+      'DXB': 'UAE',
+      'SIN': 'Singapore',
+      'BKK': 'Thailand',
+      'CDG': 'France',
+      'HND': 'Japan',
+      'SYD': 'Australia',
+      'YYZ': 'Canada',
+      'HKG': 'Hong Kong',
+      'FRA': 'Germany',
+      'AMS': 'Netherlands',
+      'FCO': 'Italy',
+      'MAD': 'Spain',
+      'IST': 'Turkey',
+      'ICN': 'South Korea',
+      'PVG': 'China',
+      'MEL': 'Australia',
+      'AKL': 'New Zealand',
+      'CPT': 'South Africa'
+    };
+    
+    return countryMap[code] || 'Unknown';
+  };
+
+  // Handle city selection
+  const handleCitySelect = (field, value) => {
+    setSearchParams(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Validate city selection
+  const validateCitySelection = (from, to) => {
+    if (!from || !to) return true; // Allow empty values during selection
+    return from !== to;
+  };
+
+  // Update the search form component
+  const renderCityInput = (field) => {
+    const value = searchParams[field];
+    const suggestions = getCitySuggestions(value, field);
+    const isValid = validateCitySelection(
+      field === 'from' ? value : searchParams.from,
+      field === 'to' ? value : searchParams.to
+    );
+
+    return (
+      <div className="relative">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => handleCitySelect(field, e.target.value)}
+          placeholder={field === 'from' ? 'From' : 'To'}
+          className={`w-full p-2 border rounded-md ${
+            !isValid ? 'border-red-500' : 'border-gray-300'
+          }`}
+        />
+        {!isValid && (
+          <p className="text-red-500 text-sm mt-1">
+            Please select different cities for departure and arrival
+          </p>
+        )}
+        {suggestions.length > 0 && (
+          <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg">
+            {suggestions.map((suggestion) => (
+              <div
+                key={suggestion.code}
+                onClick={() => handleCitySelect(field, suggestion.code)}
+                className="p-2 hover:bg-gray-100 cursor-pointer"
+              >
+                <div className="font-medium">{suggestion.name}</div>
+                <div className="text-sm text-gray-500">
+                  {suggestion.code} - {suggestion.country}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const filteredFlights = getFilteredFlights();
+
+  const getPaginatedData = () => {
+    const filteredData = getFilteredFlights();
+    const totalItems = filteredData.length;
+    const totalPages = Math.ceil(totalItems / flightsPerPage);
+    
+    // Calculate the start and end index for the current page
+    const startIndex = (currentPage - 1) * flightsPerPage;
+    const endIndex = Math.min(startIndex + flightsPerPage, totalItems);
+    
+    // Get the current page's items
+    const currentItems = filteredData.slice(startIndex, endIndex);
+    
+    return {
+      currentItems,
+      totalPages,
+      totalItems,
+      currentPage,
+      startIndex,
+      endIndex
+    };
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const MobileQuickFilters = ({ filters, onFilterChange, sortOrder, onSortChange, activeFiltersCount, setIsFilterOpen }) => {
+    const [showSortOptions, setShowSortOptions] = useState(false);
+
+    const sortOptions = [
+      { value: 'price', label: 'Cheapest', icon: '💰' },
+      { value: 'duration', label: 'Fastest', icon: '⚡' },
+      { value: 'departure', label: 'Earliest', icon: '🌅' },
+      { value: '-price', label: 'Luxury', icon: '✨' }
+    ];
+
+    const quickFilters = [
+      { type: 'stops', value: '0', label: 'Non-stop' },
+      { type: 'stops', value: '1', label: '1 Stop max' },
+      { type: 'price', value: [0, 5000], label: 'Under $5000' },
+      { type: 'price', value: [0, 10000], label: 'Under $10000' }
+    ];
+
+    return (
+      <div className="mb-4">
+        {/* Sort Dropdown */}
+        <div className="relative mb-3">
+          <button
+            onClick={() => setShowSortOptions(!showSortOptions)}
+            className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm border border-gray-200"
+          >
+            <div className="flex items-center">
+              <ArrowUpDown className="h-4 w-4 text-blue-600 mr-2" />
+              <span className="text-gray-700">Sort by: </span>
+              <span className="font-medium text-blue-600 ml-1">
+                {sortOptions.find(opt => opt.value === sortOrder)?.label || 'Best Match'}
+              </span>
+            </div>
+            <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${showSortOptions ? 'transform rotate-180' : ''}`} />
+          </button>
+
+          {showSortOptions && (
+            <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+              {sortOptions.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onSortChange(option.value);
+                    setShowSortOptions(false);
+                  }}
+                  className={`w-full flex items-center px-4 py-3 hover:bg-gray-50 ${
+                    sortOrder === option.value
+                      ? 'bg-blue-50 text-blue-600'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  <span className="text-xl mr-3">{option.icon}</span>
+                  <span className="font-medium">{option.label}</span>
+                  {sortOrder === option.value && (
+                    <span className="ml-auto text-blue-600">✓</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Filter Chips */}
+        <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-1">
+          <button
+            onClick={() => setIsFilterOpen(true)}
+            className={`flex items-center px-3 py-2 rounded-full border shadow-sm whitespace-nowrap ${
+              activeFiltersCount > 0
+                ? 'bg-blue-600 text-white border-blue-700'
+                : 'bg-white text-gray-700 border-gray-200'
+            }`}
+          >
+            <Filter className="h-4 w-4 mr-1" />
+            {activeFiltersCount > 0 ? `${activeFiltersCount} Active` : 'All Filters'}
+          </button>
+
+          {quickFilters.map((filter, index) => (
+            <button
+              key={index}
+              onClick={() => onFilterChange(filter.type, filter.value)}
+              className={`px-3 py-2 rounded-full border shadow-sm whitespace-nowrap ${
+                (filter.type === 'stops' && filters.stops === filter.value) ||
+                (filter.type === 'price' && filters.price[1] === filter.value[1])
+                  ? 'bg-blue-600 text-white border-blue-700'
+                  : 'bg-white text-gray-700 border-gray-200'
+              }`}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const MobileFilterDrawer = ({ isOpen, onClose, filters, onFilterChange, airlines, sortOrder, onSortChange }) => {
+    if (!isOpen) return null;
+
+    const [activeTab, setActiveTab] = useState('sort');
+    const tabs = [
+      { id: 'sort', label: 'Sort', icon: ArrowUpDown },
+      { id: 'price', label: 'Price', icon: () => <span className="text-lg">💰</span> },
+      { id: 'stops', label: 'Stops', icon: () => <span className="text-lg">✈️</span> },
+      { id: 'airlines', label: 'Airlines', icon: () => <span className="text-lg">🏢</span> }
+    ];
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div className="absolute inset-x-0 bottom-0 h-[90vh] bg-white rounded-t-2xl shadow-xl transform transition-transform duration-300 ease-in-out">
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-xl font-bold">Filters & Sort</h2>
+              <button 
+                onClick={onClose}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b overflow-x-auto hide-scrollbar">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 min-w-[100px] flex flex-col items-center py-3 px-4 ${
+                    activeTab === tab.id
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-500'
+                  }`}
+                >
+                  <tab.icon className="h-5 w-5 mb-1" />
+                  <span className="text-sm font-medium">{tab.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="p-4">
+                {activeTab === 'sort' && (
+                  <div className="space-y-2">
+                    {[
+                      { value: 'price', label: 'Lowest price first', icon: '💰' },
+                      { value: '-price', label: 'Highest price first', icon: '✨' },
+                      { value: 'duration', label: 'Shortest duration', icon: '⚡' },
+                      { value: 'departure', label: 'Earliest departure', icon: '🌅' },
+                      { value: 'arrival', label: 'Earliest arrival', icon: '🌆' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => onSortChange(option.value)}
+                        className={`w-full flex items-center p-4 rounded-xl ${
+                          sortOrder === option.value
+                            ? 'bg-blue-50 border-blue-200'
+                            : 'bg-white border-gray-200'
+                        } border`}
+                      >
+                        <span className="text-xl mr-3">{option.icon}</span>
+                        <span className="font-medium text-gray-700">{option.label}</span>
+                        {sortOrder === option.value && (
+                          <span className="ml-auto text-blue-600">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === 'price' && (
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="font-medium text-gray-700">Price range</span>
+                        <span className="text-blue-600 font-medium">
+                          ${filters.price[0]} - ${filters.price[1]}
+                        </span>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="50000"
+                        step="1000"
+                        value={filters.price[1]}
+                        onChange={(e) => onFilterChange('price', [filters.price[0], parseInt(e.target.value)])}
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      {[5000, 10000, 15000, 20000].map(price => (
+                        <button
+                          key={price}
+                          onClick={() => onFilterChange('price', [0, price])}
+                          className={`p-3 rounded-xl border ${
+                            filters.price[1] === price
+                              ? 'bg-blue-50 border-blue-200 text-blue-600'
+                              : 'bg-white border-gray-200 text-gray-700'
+                          }`}
+                        >
+                          Under ${price.toLocaleString()}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeTab === 'stops' && (
+                  <div className="space-y-3">
+                    {[
+                      { value: 'any', label: 'Any number of stops', icon: '🔄' },
+                      { value: '0', label: 'Non-stop only', icon: '✈️' },
+                      { value: '1', label: '1 stop maximum', icon: '🛑' }
+                    ].map(option => (
+                      <button
+                        key={option.value}
+                        onClick={() => onFilterChange('stops', option.value)}
+                        className={`w-full flex items-center p-4 rounded-xl ${
+                          filters.stops === option.value
+                            ? 'bg-blue-50 border-blue-200'
+                            : 'bg-white border-gray-200'
+                        } border`}
+                      >
+                        <span className="text-xl mr-3">{option.icon}</span>
+                        <span className="font-medium text-gray-700">{option.label}</span>
+                        {filters.stops === option.value && (
+                          <span className="ml-auto text-blue-600">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === 'airlines' && (
+                  <div className="space-y-2">
+                    {airlines.map(airline => (
+                      <button
+                        key={airline}
+                        onClick={() => {
+                          const updatedAirlines = filters.airlines.includes(airline)
+                            ? filters.airlines.filter(a => a !== airline)
+                            : [...filters.airlines, airline];
+                          onFilterChange('airlines', updatedAirlines);
+                        }}
+                        className={`w-full flex items-center p-4 rounded-xl ${
+                          filters.airlines.includes(airline)
+                            ? 'bg-blue-50 border-blue-200'
+                            : 'bg-white border-gray-200'
+                        } border`}
+                      >
+                        <span className="font-medium text-gray-700">{airline}</span>
+                        {filters.airlines.includes(airline) && (
+                          <span className="ml-auto text-blue-600">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t bg-gray-50">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    onFilterChange('price', [0, 20000]);
+                    onFilterChange('stops', 'any');
+                    onFilterChange('airlines', []);
+                    onSortChange('price');
+                  }}
+                  className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Reset All
+                </button>
+                <button
+                  onClick={onClose}
+                  className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const MobileSearchBar = ({ searchParams, onSearch, filters, onFilterChange, sortOrder, onSortChange }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [localSearchParams, setLocalSearchParams] = useState(searchParams);
+
+    // Calculate active filters count
+    const activeFiltersCount = [
+      filters.stops !== 'any',
+      filters.price[1] !== 20000,
+      filters.airlines.length > 0
+    ].filter(Boolean).length;
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSearch(localSearchParams);
+      setIsOpen(false);
+    };
+
+    return (
+      <>
+        {/* Collapsed Search Bar */}
+        {!isOpen && (
+          <div className="bg-white shadow-md rounded-xl p-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div 
+                className="flex-1 cursor-pointer"
+                onClick={() => setIsOpen(true)}
+              >
+                <div className="flex items-center text-gray-800 mb-2">
+                  <div className="font-semibold">{localSearchParams.from || 'From'}</div>
+                  <ArrowRight className="h-4 w-4 mx-2 text-gray-400" />
+                  <div className="font-semibold">{localSearchParams.to || 'To'}</div>
+                </div>
+                <div className="text-sm text-gray-500">
+                  {localSearchParams.departDate ? new Date(localSearchParams.departDate).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short'
+                  }) : 'Select dates'} • {localSearchParams.travelers} traveler{localSearchParams.travelers !== 1 ? 's' : ''}
+                </div>
+              </div>
+              <button
+                onClick={() => setIsFilterOpen(true)}
+                className="ml-4 bg-blue-50 hover:bg-blue-100 rounded-lg p-2 transition-colors"
+              >
+                <Filter className="h-5 w-5 text-blue-600" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Expanded Search Form */}
+        {isOpen && (
+          <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold">Modify Search</h2>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* From and To Fields */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
+                    <input
+                      type="text"
+                      value={localSearchParams.from}
+                      onChange={(e) => setLocalSearchParams(prev => ({ ...prev, from: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter city or airport"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
+                    <input
+                      type="text"
+                      value={localSearchParams.to}
+                      onChange={(e) => setLocalSearchParams(prev => ({ ...prev, to: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter city or airport"
+                    />
+                  </div>
+                </div>
+
+                {/* Date Fields */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
+                    <input
+                      type="date"
+                      value={localSearchParams.departDate}
+                      onChange={(e) => setLocalSearchParams(prev => ({ ...prev, departDate: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Return Date (Optional)</label>
+                    <input
+                      type="date"
+                      value={localSearchParams.returnDate || ''}
+                      onChange={(e) => setLocalSearchParams(prev => ({ ...prev, returnDate: e.target.value }))}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Travelers */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Travelers</label>
+                  <select
+                    value={localSearchParams.travelers}
+                    onChange={(e) => setLocalSearchParams(prev => ({ ...prev, travelers: e.target.value }))}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                      <option key={num} value={num}>{num} Traveler{num !== 1 ? 's' : ''}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Search Button */}
+                <button
+                  type="submit"
+                  className="w-full py-4 bg-blue-600 text-white rounded-xl font-semibold text-lg shadow-md hover:bg-blue-700 transition-colors"
+                >
+                  Search Flights
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Filter Drawer */}
+        <MobileFilterDrawer
+          isOpen={isFilterOpen}
+          onClose={() => setIsFilterOpen(false)}
+          filters={filters}
+          onFilterChange={onFilterChange}
+          airlines={getAllAirlines()}
+          sortOrder={sortOrder}
+          onSortChange={onSortChange}
+        />
+      </>
+    );
+  };
+
+  if (isMobileView) {
+    const { currentItems, totalPages, totalItems, startIndex, endIndex } = getPaginatedData();
+    
+    return (
+      <div className="w-full min-h-screen bg-gray-50 flex flex-col">
+        <Navbar />
+        <div className="flex-1 px-4 pt-4 pb-24">
+          <MobileSearchBar
+            searchParams={searchParams}
+            onSearch={handleSearch}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            sortOrder={sortOrder}
+            onSortChange={setSortOrder}
+          />
+          
+          {loading ? (
+            <div className="flex flex-col justify-center items-center h-64 bg-white rounded-xl shadow-md p-8">
+              <div className="relative">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+                <Plane className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-6 w-6 text-blue-500" />
+              </div>
+              <p className="mt-6 text-gray-600 font-medium">Searching for the best flights...</p>
+            </div>
+          ) : currentItems.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-md p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
+                <Plane className="h-8 w-8 text-blue-500" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">No flights found</h3>
+              <p className="text-gray-600">Try adjusting your search filters or dates.</p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-4">
+                {currentItems.map((flight, idx) => (
+                  <div key={idx} className="bg-white rounded-xl shadow-md p-4 border border-gray-100">
+                    {/* Flight Card Content */}
+                    <div className="flex items-center gap-3 mb-4">
+                      <img 
+                        src={flight.airline?.logo} 
+                        alt={flight.airline?.name} 
+                        className="w-12 h-12 object-contain rounded-lg bg-gray-50"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://via.placeholder.com/40?text=✈️';
+                        }}
+                      />
+                      <div className="flex-1">
+                        <div className="font-bold text-gray-900">{flight.airline?.name}</div>
+                        <div className="text-sm text-gray-500">{flight.segments?.[0]?.flightNumber}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl font-bold text-blue-600">{flight.price?.formatted}</div>
+                        <div className="text-xs text-gray-500">per person</div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div className="font-bold">{flight.departure?.time}</div>
+                          <div className="text-gray-500">{flight.departure?.cityName}</div>
+                        </div>
+                        <div className="text-center flex-1 px-4">
+                          <div className="text-xs text-gray-500">{flight.duration?.replace('PT', '').replace('H', 'h ').replace('M', 'm')}</div>
+                          <div className="border-t border-gray-300 my-1"></div>
+                          <div className="text-xs text-gray-500">
+                            {flight.stops === 0 ? 'Non-stop' : `${flight.stops} stop${flight.stops > 1 ? 's' : ''}`}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold">{flight.arrival?.time}</div>
+                          <div className="text-gray-500">{flight.arrival?.cityName}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleBookFlight(flight)}
+                      className="w-full mt-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                      Select Flight
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Pagination Controls */}
+              <div className="mt-8 flex flex-col items-center">
+                <div className="text-sm text-gray-600 mb-4">
+                  Showing {startIndex + 1} to {endIndex} of {totalItems} flights
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg bg-white shadow-sm text-gray-500 disabled:opacity-50"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <span className="px-4 py-2 rounded-lg bg-white shadow-sm">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg bg-white shadow-sm text-gray-500 disabled:opacity-50"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Desktop view
+  const { currentItems, totalPages, totalItems, startIndex, endIndex } = getPaginatedData();
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -736,8 +1600,8 @@ export default function FlightSearchPage() {
                     <h4 className="font-medium text-gray-800 mb-4">Price Range</h4>
                     <div className="px-2">
                       <div className="flex justify-between mb-2">
-                        <span className="text-sm font-medium text-blue-600">₹{filters.price[0]}</span>
-                        <span className="text-sm font-medium text-blue-600">₹{filters.price[1]}</span>
+                        <span className="text-sm font-medium text-blue-600">${filters.price[0]}</span>
+                        <span className="text-sm font-medium text-blue-600">${filters.price[1]}</span>
                       </div>
                       
                       <input
@@ -795,7 +1659,7 @@ export default function FlightSearchPage() {
                   <div className="p-5">
                     <h4 className="font-medium text-gray-800 mb-4">Airlines</h4>
                     <div className="space-y-2 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                      {getUniqueAirlines().map(airline => (
+                      {getAllAirlines().map(airline => (
                         <label key={airline} className="flex items-center p-2 hover:bg-blue-50 rounded-md transition-colors cursor-pointer">
                           <input 
                             type="checkbox" 
@@ -835,15 +1699,11 @@ export default function FlightSearchPage() {
                   <div className="flex flex-col md:flex-row items-center justify-between">
                     <div className="mb-4 md:mb-0">
                       <p className="text-gray-600">
-                        <span className="font-bold text-blue-600 text-lg">{filteredFlights.length}</span> 
+                        <span className="font-bold text-blue-600 text-lg">{totalItems}</span> 
                         <span className="text-gray-700"> flights found</span>
-                        {searchParams.from && searchParams.to && (
-                          <span className="inline-flex items-center ml-2">
-                            <span className="font-medium text-gray-800">{searchParams.from}</span>
-                            <ArrowRight className="h-4 w-4 mx-1 text-gray-500" />
-                            <span className="font-medium text-gray-800">{searchParams.to}</span>
-                          </span>
-                        )}
+                        <span className="text-sm text-gray-500 ml-2">
+                          (Showing {startIndex + 1} to {endIndex})
+                        </span>
                       </p>
                     </div>
                     
@@ -868,7 +1728,7 @@ export default function FlightSearchPage() {
                 </div>
                 
                 {/* Enhanced Flight Cards */}
-                {filteredFlights.length === 0 ? (
+                {currentItems.length === 0 ? (
                   <div className="bg-white rounded-xl shadow-md p-10 text-center">
                     <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-100 mb-6">
                       <Plane className="h-10 w-10 text-blue-500" />
@@ -891,7 +1751,7 @@ export default function FlightSearchPage() {
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {filteredFlights.map((flight, index) => (
+                    {currentItems.map((flight, index) => (
                       <div 
                         key={index} 
                         className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
@@ -903,17 +1763,21 @@ export default function FlightSearchPage() {
                             <div className="flex items-center mb-4 md:mb-0">
                               <div className="w-14 h-14 flex items-center justify-center bg-gray-100 rounded-lg mr-4 overflow-hidden shadow-sm">
                                 <img 
-                                  src={flight.segments[0]?.airline?.logo} 
-                                  alt={flight.segments[0]?.airline?.name || 'Airline'}
+                                  src={flight.airline?.logo} 
+                                  alt={flight.airline?.name || 'Airline'}
                                   className="w-10 h-10 object-contain"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://via.placeholder.com/40?text=✈️';
+                                  }}
                                 />
                               </div>
                               <div>
-                                <h3 className="font-bold text-gray-900 text-lg">{flight.segments[0]?.airline?.name || 'Unknown Airline'}</h3>
+                                <h3 className="font-bold text-gray-900 text-lg">{flight.airline?.name || 'Unknown Airline'}</h3>
                                 <div className="text-sm text-gray-500 flex items-center">
-                                  <span className="font-medium text-blue-600">{flight.segments[0]?.flightNumber || 'N/A'}</span>
+                                  <span className="font-medium text-blue-600">{flight.segments?.[0]?.flightNumber || 'N/A'}</span>
                                   <span className="mx-2">•</span>
-                                  <span>{flight.segments[0]?.aircraft || 'Unknown Aircraft'}</span>
+                                  <span>{flight.segments?.[0]?.aircraft || 'Unknown Aircraft'}</span>
                                 </div>
                               </div>
                             </div>
@@ -922,7 +1786,7 @@ export default function FlightSearchPage() {
                             <div className="flex flex-col items-end">
                               <div className="text-right mb-3">
                                 <div className="text-3xl font-bold text-blue-600 flex items-center">
-                                  ${flight.price?.total || 'N/A'}
+                                  {flight.price?.formatted || `$${flight.price?.total || 0}`}
                                   {Math.random() > 0.7 && (
                                     <span className="ml-2 px-2 py-0.5 text-xs font-bold bg-green-100 text-green-700 rounded-full">DEAL</span>
                                   )}
@@ -942,31 +1806,43 @@ export default function FlightSearchPage() {
                           <div className="mt-6 grid grid-cols-4 gap-4 text-sm text-gray-600">
                             <div>
                               <div className="font-medium">Departure</div>
-                              <div>{flight.segments[0]?.departure?.date || 'N/A'}</div>
+                              <div className="font-bold text-gray-800">{flight.departure?.time || 'N/A'}</div>
+                              <div>{flight.departure?.date || 'N/A'}</div>
                               <div className="text-xs">
-                                {flight.segments[0]?.departure?.airport || 'N/A'}
-                                {flight.segments[0]?.departure?.terminal && (
-                                  <span className="ml-1 text-blue-600">Terminal {flight.segments[0]?.departure?.terminal}</span>
+                                <span className="font-medium">{flight.departure?.cityName || flight.departure?.airport || 'N/A'}</span>
+                                {flight.departure?.terminal && (
+                                  <span className="ml-1 text-blue-600">Terminal {flight.departure?.terminal}</span>
                                 )}
                               </div>
                             </div>
                             <div>
                               <div className="font-medium">Arrival</div>
-                              <div>{flight.segments[0]?.arrival?.date || 'N/A'}</div>
+                              <div className="font-bold text-gray-800">{flight.arrival?.time || 'N/A'}</div>
+                              <div>{flight.arrival?.date || 'N/A'}</div>
                               <div className="text-xs">
-                                {flight.segments[0]?.arrival?.airport || 'N/A'}
-                                {flight.segments[0]?.arrival?.terminal && (
-                                  <span className="ml-1 text-blue-600">Terminal {flight.segments[0]?.arrival?.terminal}</span>
+                                <span className="font-medium">{flight.arrival?.cityName || flight.arrival?.airport || 'N/A'}</span>
+                                {flight.arrival?.terminal && (
+                                  <span className="ml-1 text-blue-600">Terminal {flight.arrival?.terminal}</span>
                                 )}
                               </div>
                             </div>
                             <div>
                               <div className="font-medium">Duration</div>
-                              <div>{flight.duration || 'N/A'}</div>
+                              <div className="font-bold text-gray-800">
+                                {flight.duration?.replace('PT', '').replace('H', 'h ').replace('M', 'm') || 'N/A'}
+                              </div>
+                              <div className="text-xs">
+                                {flight.stops === 0 ? 'Non-stop' : `${flight.stops} ${flight.stops === 1 ? 'stop' : 'stops'}`}
+                              </div>
                             </div>
                             <div>
                               <div className="font-medium">Class</div>
-                              <div>{flight.segments[0]?.cabin || 'Economy'}</div>
+                              <div className="font-bold text-gray-800">
+                                {flight.cabin?.charAt(0).toUpperCase() + flight.cabin?.slice(1).toLowerCase() || 'Economy'}
+                              </div>
+                              <div className="text-xs">
+                                {flight.baggage?.checked?.weight ? `${flight.baggage.checked.weight}${flight.baggage.checked.weightUnit}` : 'No checked baggage'}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -976,31 +1852,71 @@ export default function FlightSearchPage() {
                 )}
                 
                 {/* Enhanced Pagination */}
-                {filteredFlights.length > 0 && (
-                  <div className="mt-8 flex justify-center">
-                    <nav className="inline-flex items-center gap-1 bg-white rounded-lg shadow-md p-1.5">
-                      <button className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50">
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                      
-                      <button className="w-9 h-9 rounded-md bg-blue-600 text-white font-medium flex items-center justify-center shadow-sm">
-                        1
-                      </button>
-                      
-                      <button className="w-9 h-9 rounded-md text-gray-700 hover:bg-blue-50 font-medium flex items-center justify-center">
-                        2
-                      </button>
-                      
-                      <button className="w-9 h-9 rounded-md text-gray-700 hover:bg-blue-50 font-medium flex items-center justify-center">
-                        3
-                      </button>
-                      
-                      <button className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                    </nav>
+                <div className="mt-8 flex flex-col items-center">
+                  <div className="text-sm text-gray-600 mb-4">
+                    Showing {startIndex + 1} to {endIndex} of {totalItems} flights
                   </div>
-                )}
+                  <nav className="inline-flex items-center gap-1 bg-white rounded-lg shadow-md p-1.5">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    
+                    {[...Array(totalPages)].map((_, idx) => {
+                      const pageNumber = idx + 1;
+                      const isCurrentPage = pageNumber === currentPage;
+                      
+                      // Show first page, last page, and pages around current page
+                      if (
+                        pageNumber === 1 ||
+                        pageNumber === totalPages ||
+                        (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                      ) {
+                        return (
+                          <button
+                            key={pageNumber}
+                            onClick={() => handlePageChange(pageNumber)}
+                            className={`w-9 h-9 rounded-md font-medium flex items-center justify-center ${
+                              isCurrentPage
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-gray-700 hover:bg-blue-50'
+                            }`}
+                          >
+                            {pageNumber}
+                          </button>
+                        );
+                      }
+                      
+                      // Show ellipsis for skipped pages
+                      if (
+                        (pageNumber === 2 && currentPage > 3) ||
+                        (pageNumber === totalPages - 1 && currentPage < totalPages - 2)
+                      ) {
+                        return (
+                          <span
+                            key={pageNumber}
+                            className="w-9 h-9 flex items-center justify-center text-gray-500"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+                      
+                      return null;
+                    })}
+                    
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="p-2 rounded-md text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-colors disabled:opacity-50"
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </nav>
+                </div>
               </div>
             </div>
           )}
@@ -1011,3 +1927,4 @@ export default function FlightSearchPage() {
     </div>
   )
 }
+
