@@ -665,7 +665,7 @@ const HomePage = () => {
       
       {/* <ContactSection /> */}
       
-      <Footer />
+      
       
       {/* Mobile scroll to top button - only visible on small screens */}
       <button 
