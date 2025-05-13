@@ -284,7 +284,7 @@ export default function FlightSearchPage() {
     'IXV': 'Along (Along Airport)',
     'IXW': 'Jamshedpur (Sonari Airport)',
     'IXY': 'Kandla (Kandla Airport)',
-    'IXZ': 'Port Blair (Veer Savarkar International)',
+    // 'IXZ': 'Port Blair (Veer Savarkar International)',
 
     // US Cities
     'JFK': 'New York (John F. Kennedy International)',
@@ -707,7 +707,7 @@ export default function FlightSearchPage() {
       if (!data.success) {
         throw new Error(data.error || 'Failed to fetch flights');
       }
-
+      
       // Transform flight data
       const flightData = transformFlightData(data.data.flights);
       setFlights(flightData);

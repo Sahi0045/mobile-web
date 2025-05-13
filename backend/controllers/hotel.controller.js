@@ -29,8 +29,9 @@ const getAccessToken = async () => {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         auth: {
-          username: 'a9Gz1aJ5Noo7sOvTb11TJ8bwF3jyaAjX',    // Make sure this is set in your .env
-          password: 'nw6Gz0x0NusJ9uu3'   // Make sure this is set in your .env
+          username: process.env.REACT_APP_AMADEUS_API_KEY,
+        // client_secret: // Make sure this is set in your .env
+          password: process.env.REACT_APP_AMADEUS_API_SECRET,      // Make sure this is set in your .env
         }
       }
     );
