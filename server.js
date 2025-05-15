@@ -29,6 +29,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
   exposedHeaders: ['set-cookie']
 };
+console.log('ddddddddddddddddddddddddd')
 
 // Middleware
 app.use(cors(corsOptions));

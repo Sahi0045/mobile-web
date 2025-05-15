@@ -78,7 +78,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
-        const response = await axios.get('https://jettter.vercel.app/api/hotels/destinations');
+        const response = await axios.get(import.meta.env.VITE_APP_URL+'hotels/destinations');
         if (response.data.success) {
           setDestinationSuggestions(response.data.data);
         }
@@ -119,7 +119,7 @@ export default function LandingPage() {
         checkOutDate: selectedEndDate?.toISOString()
       });
 
-      const response = await axios.get('https://jettter.vercel.app/api/hotels/search', {
+      const response = await axios.get(import.meta.env.VITE_APP_URL+'hotels/search', {
         params: {
           destination: cityCode,
           dates: searchDates !== "Select dates" ? searchDates : undefined,

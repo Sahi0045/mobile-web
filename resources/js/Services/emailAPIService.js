@@ -15,7 +15,7 @@ const emailAPIService = {
       // First, try a direct API call to the test endpoint to verify connectivity
       // This is a simple endpoint that should work if the API is accessible
       try {
-        await fetch('https://jettter.vercel.app/api/test', { method: 'GET' })
+        await fetch(import.meta.env.VITE_APP_URL+'test', { method: 'GET' })
           .then(res => console.log('API connectivity test:', res.ok ? 'Success' : 'Failed'));
       } catch (e) {
         console.log('API connectivity test failed:', e.message);

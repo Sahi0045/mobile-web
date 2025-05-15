@@ -255,7 +255,7 @@ export default function FlightLanding() {
       };
 
       try {
-        const response = await axios.post("https://jettter.vercel.app/api/flights/search", searchData, {
+        const response = await axios.post(import.meta.env.VITE_APP_URL+"flights/search", searchData, {
           headers: {
             "Content-Type": "application/json",
             "Accept": "application/json"

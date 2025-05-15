@@ -124,9 +124,9 @@ export default function FlightSearchPage() {
             delete searchData.returnDate;
           }
 
-          console.log('Making API request with data:', searchData);
+          console.error('Making API request with data:', import.meta.env.VITE_APP_URL);
 
-          const response = await fetch('https://jettter.vercel.app/api/flights/search', {
+          const response = await fetch(import.meta.env.VITE_APP_URL+'flights/search', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -520,7 +520,7 @@ export default function FlightSearchPage() {
         delete searchData.returnDate;
       }
 
-      const response = await fetch('https://jettter.vercel.app/api/flights/search', {
+      const response = await fetch(import.meta.env.VITE_APP_URL+'flights/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -694,7 +694,7 @@ export default function FlightSearchPage() {
       );
       
       // Fetch flights for the new date
-      const response = await fetch('https://jettter.vercel.app/api/flights/search', {
+      const response = await fetch(import.meta.env.VITE_APP_URL+'flights/search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

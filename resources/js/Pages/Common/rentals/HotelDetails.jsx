@@ -247,7 +247,7 @@ export default function HotelDetails() {
         setOfferLoading(true);
         setOfferError('');
 
-        const response = await axios.get(`/api/hotels/offers/${selectedHotel.id}`, {
+        const response = await axios.get(`${import.meta.env.APP_URL}hotels/offers/${selectedHotel.id}`, {
           params: {
             checkInDate: formatDate(checkInDate),
             checkOutDate: formatDate(checkOutDate),
@@ -405,7 +405,7 @@ export default function HotelDetails() {
       const formattedCheckIn = formatDate(checkInDate);
       const formattedCheckOut = formatDate(checkOutDate);
 
-      const response = await axios.get('https://jettter.vercel.app/api/hotels/check-availability', {
+      const response = await axios.get(import.meta.env.VITE_APP_URL+'hotels/check-availability', {
         params: {
           destination: hotelData.id,
           checkInDate: formattedCheckIn,
@@ -460,7 +460,7 @@ export default function HotelDetails() {
 
       // Send confirmation email
       try {
-        const baseUrl = import.meta.env.PROD
+        const baseUrl = import.meta.env.APP_URL
           ? window.location.origin
           : 'https://jetsetterss.com';
 
