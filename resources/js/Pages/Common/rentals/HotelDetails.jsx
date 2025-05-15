@@ -247,7 +247,7 @@ export default function HotelDetails() {
         setOfferLoading(true);
         setOfferError('');
 
-        const response = await axios.get(`${import.meta.env.APP_URL}hotels/offers/${selectedHotel.id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_APP_URL}hotels/offers/${selectedHotel.id}`, {
           params: {
             checkInDate: formatDate(checkInDate),
             checkOutDate: formatDate(checkOutDate),
@@ -460,7 +460,7 @@ export default function HotelDetails() {
 
       // Send confirmation email
       try {
-        const baseUrl = import.meta.env.APP_URL
+        const baseUrl = import.meta.env.VITE_APP_URL
           ? window.location.origin
           : 'https://jetsetterss.com';
 
